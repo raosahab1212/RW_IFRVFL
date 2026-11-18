@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+catboost_info/
+results/
+logs/
+smoke_*.log
+smoke_results.csv
+# third-party reference code used only for validation (licence not checked)
+reference/
+# dataset whose source/licence is still to be confirmed
+data/protien.csv
+NOTES_internal.md

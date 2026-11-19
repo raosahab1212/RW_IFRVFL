@@ -16,8 +16,7 @@ Variants (`variant=`):
     rvfl          w = 1
     fuzzy         w = g                                   classical fuzzy weight
     nonmem        w = 1 - nu                              neighbourhood only
-    pw_unscaled   w = g (1 - nu)                          IFRVFLC as described in the
-                                                          manuscript (Sec. 2.5)
+    pw_unscaled   w = g (1 - nu)                          unscaled product weight
     sf_unscaled   w = (1 + g - nu) / 2                    IFRVFLC-SF
     pw_scaled     mu = (1-nu) g,  w = mu (1 - nu)
     rw            mu = (1-nu) g,  w = (1 + mu - nu) / 2   proposed RW-IFRVFL
@@ -28,8 +27,6 @@ Variants (`variant=`):
                   rho = share of other-class points within radius alpha
                   nu  = (1 - mu) rho
                   w   = Ha score
-                  NOTE: check against the full text of Mishra et al. (2023)
-                  before reporting it as IFRVFLC.
 """
 
 import hashlib
@@ -48,10 +45,6 @@ VARIANTS = (
 K_MAX = 15  # neighbours cached per training matrix; covers every k in the grids
 
 
-# ----------------------------------------------------------------------------
-# Neighbour cache: tuning refits the same training matrix many times with
-# different (L, lambda, k, sigma); the neighbour graph only depends on X.
-# ----------------------------------------------------------------------------
 _NN_CACHE = {}
 _NN_CACHE_MAX = 64
 
@@ -116,7 +109,6 @@ class FuzzyRVFL(BaseEstimator, ClassifierMixin):
         self.delta = delta
         self.random_state = random_state
 
-    # -------------------------------------------------------------- weights
     def _weights(self, X, y):
         v = self.variant
         n = X.shape[0]
@@ -171,7 +163,6 @@ class FuzzyRVFL(BaseEstimator, ClassifierMixin):
             return np.random.default_rng(self.random_state).permutation(w)
         raise ValueError(f"unknown variant {v!r}; choose from {VARIANTS}")
 
-    # ------------------------------------------------------------------ fit
     def fit(self, X, y):
         X, y = check_X_y(X, y)
         self.classes_ = np.unique(y)
@@ -197,7 +188,6 @@ class FuzzyRVFL(BaseEstimator, ClassifierMixin):
     def _augment(self, Xn):
         return np.hstack([Xn, _sigmoid(Xn @ self.W_.T + self.b_)])
 
-    # -------------------------------------------------------------- predict
     def decision_function(self, X):
         check_is_fitted(self, "beta_")
         Xn = self.scaler_.transform(check_array(X))

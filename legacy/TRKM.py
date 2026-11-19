@@ -30,9 +30,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
         self.mew = mew
         self.batch_size = batch_size
 
-    # ==========================================================
-    # Gaussian Kernel - Memory Efficient
-    # ==========================================================
 
     def _calculate_kA(self, A, C):
 
@@ -47,13 +44,9 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             dtype=np.float64
         )
 
-        # Pre-compute squared norms
         norm_A_sq = np.sum(A * A, axis=1)
         norm_C_sq = np.sum(C * C, axis=1)
 
-        # ------------------------------------------------------
-        # Batch computation
-        # ------------------------------------------------------
 
         for start in range(0, n_A, self.batch_size):
 
@@ -64,14 +57,12 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
 
             A_batch = A[start:end]
 
-            # Squared Euclidean distance
             distance = (
                 norm_A_sq[start:end, None]
                 - 2.0 * np.dot(A_batch, C.T)
                 + norm_C_sq[None, :]
             )
 
-            # Numerical protection
             distance = np.maximum(
                 distance,
                 0.0
@@ -83,9 +74,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
 
         return K
 
-    # ==========================================================
-    # Fit
-    # ==========================================================
 
     def fit(self, X, y):
 
@@ -114,9 +102,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
                 "batch_size must be greater than 0."
             )
 
-        # ======================================================
-        # Binary classification
-        # ======================================================
 
         self.classes_ = np.unique(y)
 
@@ -125,9 +110,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
                 "TRKMClassifier supports binary classification only."
             )
 
-        # ------------------------------------------------------
-        # Convert labels internally to {-1, +1}
-        # ------------------------------------------------------
 
         self._class_to_internal = {
             self.classes_[0]: -1,
@@ -144,9 +126,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             for label in y
         ])
 
-        # ======================================================
-        # Store training data
-        # ======================================================
 
         self.X_train_ = X
         self.y_train_ = y_internal
@@ -165,9 +144,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
         p = A.shape[0]
         q = B.shape[0]
 
-        # ======================================================
-        # First TRKM Hyperplane
-        # ======================================================
 
         print(
             f"TRKM: computing K(A,B), shape=({p}, {q})"
@@ -204,9 +180,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             )
         )
 
-        # ------------------------------------------------------
-        # K(A,A)
-        # ------------------------------------------------------
 
         print(
             f"TRKM: computing K(A,A), shape=({p}, {p})"
@@ -246,15 +219,11 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             )
         )
 
-        # Numerical regularization
         Rh2 += 0.05 * np.eye(
             Rh2.shape[1],
             dtype=np.float64
         )
 
-        # ------------------------------------------------------
-        # Solve
-        # ------------------------------------------------------
 
         H1_b1 = np.linalg.solve(
             Rh2,
@@ -266,7 +235,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             H1_b1[-1, 0]
         )
 
-        # Free memory
         del k_A_B
         del k_A_A
         del Rh11
@@ -275,9 +243,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
         del Rh1
         del Rh2
 
-        # ======================================================
-        # Second TRKM Hyperplane
-        # ======================================================
 
         print(
             f"TRKM: computing K(B,A), shape=({q}, {p})"
@@ -304,9 +269,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             )
         )
 
-        # ------------------------------------------------------
-        # K(B,B)
-        # ------------------------------------------------------
 
         print(
             f"TRKM: computing K(B,B), shape=({q}, {q})"
@@ -346,15 +308,11 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             )
         )
 
-        # Numerical regularization
         Rt2 += 0.05 * np.eye(
             Rt2.shape[1],
             dtype=np.float64
         )
 
-        # ------------------------------------------------------
-        # Solve
-        # ------------------------------------------------------
 
         H2_b2 = np.linalg.solve(
             Rt2,
@@ -366,9 +324,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             H2_b2[-1, 0]
         )
 
-        # ------------------------------------------------------
-        # Store dimensions
-        # ------------------------------------------------------
 
         self.n_features_in_ = X.shape[1]
 
@@ -376,9 +331,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
 
         return self
 
-    # ==========================================================
-    # Decision Function
-    # ==========================================================
 
     def decision_function(self, X):
 
@@ -413,9 +365,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
         eta_inv1 = 1.0 / self.eta1
         eta_inv2 = 1.0 / self.eta2
 
-        # ------------------------------------------------------
-        # First function
-        # ------------------------------------------------------
 
         y1 = (
             eta_inv1
@@ -425,9 +374,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             + self.b1_
         )
 
-        # ------------------------------------------------------
-        # Second function
-        # ------------------------------------------------------
 
         y2 = (
             eta_inv2
@@ -440,14 +386,10 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
         self._last_y1 = y1
         self._last_y2 = y2
 
-        # Positive score = class +1
         score = np.abs(y2) - np.abs(y1)
 
         return score
 
-    # ==========================================================
-    # Predict
-    # ==========================================================
 
     def predict(self, X):
 
@@ -464,9 +406,6 @@ class TRKMClassifier(BaseEstimator, ClassifierMixin):
             for p in internal_pred
         ])
 
-    # ==========================================================
-    # Score
-    # ==========================================================
 
     def score(self, X, y):
 

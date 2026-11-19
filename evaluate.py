@@ -33,7 +33,6 @@ OUTER_FOLDS = 10
 SEED = 42
 
 
-# ---------------------------------------------------------------- splits
 def outer_splits(dataset, y):
     """Load (or create once) the outer 10-fold split for `dataset`."""
     os.makedirs(SPLIT_DIR, exist_ok=True)
@@ -59,7 +58,6 @@ def _stratified_subset(idx, y, n, seed=SEED):
     return np.sort(keep)
 
 
-# ----------------------------------------------------------------- noise
 def flip_labels(y, rate, seed):
     """Flip exactly round(rate*n) labels, chosen at random (binary {0,1})."""
     y = y.copy()
@@ -78,7 +76,6 @@ def gaussian_feature_noise(Xt, rate, seed):
     return Xt + np.random.default_rng(seed).normal(0.0, 1.0, Xt.shape) * rate * sd
 
 
-# --------------------------------------------------------------- metrics
 def scores_of(model, X):
     if hasattr(model, "decision_function"):
         s = np.asarray(model.decision_function(X), dtype=float)
@@ -102,7 +99,6 @@ def metrics(y, pred, score):
     return out
 
 
-# ---------------------------------------------------------- fit / score
 def fit_score(name, params, Xtr, ytr, Xte, yte, feat_noise=0.0, noise_seed=0):
     """Preprocess on train, fit, predict. Returns metrics + timings."""
     pre = make_preprocessor(Xtr).fit(Xtr)

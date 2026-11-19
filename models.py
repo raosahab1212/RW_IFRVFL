@@ -102,7 +102,6 @@ RVFL_SPACE = {"n_hidden": HIDDEN, "lam": LAMBDA}
 GAUSS_SPACE = {**RVFL_SPACE, "sigma_scale": SIGMA}
 FULL_SPACE = {**GAUSS_SPACE, "k": K_NN}
 
-# name: (factory, search space)
 REGISTRY = {
     "SVM": (lambda **p: SVC(kernel="rbf", **p),
             {"C": [0.01, 0.1, 1, 10, 100, 1000],
@@ -134,11 +133,9 @@ REGISTRY = {
     "TRKM": (lambda **p: TRKMClassifier(**p),
              {"eta1": [0.01, 0.1, 1, 10], "lambd1": [1e-3, 1e-1, 1],
               "mew": [2.0 ** e for e in range(-3, 6)]}),
-    # RVFL family (same random layer / solver / neighbours; weights differ)
     "RVFL": (_rvfl("rvfl"), RVFL_SPACE),
     "IFRVFLC": (_rvfl("ifrvflc"), {**RVFL_SPACE, "alpha_scale": [0.5, 1, 2, 4]}),
     "RW-IFRVFL": (_rvfl("rw"), FULL_SPACE),
-    # ablation variants
     "abl:fuzzy": (_rvfl("fuzzy"), GAUSS_SPACE),
     "abl:nonmem": (_rvfl("nonmem"), {**RVFL_SPACE, "k": K_NN}),
     "abl:pw_unscaled": (_rvfl("pw_unscaled"), FULL_SPACE),

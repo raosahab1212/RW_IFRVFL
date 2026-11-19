@@ -17,13 +17,9 @@ NOISE_LEVELS = [0.05, 0.10, 0.20, 0.30, 0.40]
 _ABLATION_ONLY = [m for m in ABLATION_MODELS if m not in BENCHMARK_MODELS]
 
 EXPERIMENTS = {
-    # E1 main benchmark (also provides the runtime table E2 and the 0% noise level)
     "e1": dict(datasets=BENCHMARK, models=BENCHMARK_MODELS, label=[0.0], feat=[0.0]),
-    # E7 case study (protein; PeNGaRoo added once its raw file is available)
     "e7": dict(datasets=CASE_STUDIES, models=BENCHMARK_MODELS, label=[0.0], feat=[0.0]),
-    # E3 ablation: variants not already in E1 (RVFL, IFRVFLC, RW-IFRVFL come from E1)
     "e3": dict(datasets=BENCHMARK, models=_ABLATION_ONLY, label=[0.0], feat=[0.0]),
-    # E4 noise: training labels / training features only, retuned at every level
     "e4_label": dict(datasets=NOISE_DATASETS, models=BENCHMARK_MODELS, label=NOISE_LEVELS, feat=[0.0]),
     "e4_feature": dict(datasets=NOISE_DATASETS, models=BENCHMARK_MODELS, label=[0.0], feat=NOISE_LEVELS),
 }

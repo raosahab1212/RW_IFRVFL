@@ -64,14 +64,12 @@ def hbar(ax, values, title, xlabel, ref=None, fmt="{:.2f}", lower_better=False, 
 e1, e3, e4, e7 = load("e1"), load("e3"), load("e4_label"), load("e7")
 fig, axes = plt.subplots(2, 2, figsize=(12, 9.2), constrained_layout=True)
 
-# (a) E1 mean rank (accuracy) over 14 datasets, lower is better
 t = e1.pivot(index="dataset", columns="model", values="accuracy")
 rank = t.rank(axis=1, ascending=False).mean()
 hbar(axes[0, 0], rank, "(a) Benchmark: mean accuracy rank over 14 datasets (1 = best)",
      "Mean rank across datasets (shorter is better)", lower_better=True)
 axes[0, 0].set_xlim(0, 14)
 
-# (b) E4 label noise: mean accuracy over 5 datasets vs noise level
 ax = axes[0, 1]
 noise_ds = ["australian", "wisconsin", "heart", "ionosphere", "magic"]
 clean = e1[e1.dataset.isin(noise_ds)].assign(label_noise=0.0)
@@ -103,7 +101,6 @@ ax.grid(color=GRID, lw=0.8)
 ax.set_axisbelow(True)
 ax.legend(frameon=False, loc="lower left", fontsize=8)
 
-# (c) E3 ablation: mean accuracy over 14 datasets per weighting variant
 ab = pd.concat([e3, e1[e1.model.isin(["RVFL", "IFRVFLC", "RW-IFRVFL"])]])
 acc = ab.groupby("model").accuracy.mean().rename(NAMES)
 hbar(axes[1, 0], acc, "(c) Ablation: mean accuracy over 14 datasets",
@@ -111,7 +108,6 @@ hbar(axes[1, 0], acc, "(c) Ablation: mean accuracy over 14 datasets",
      dots=True)
 axes[1, 0].set_xlim(acc.min() - 0.004, acc.max() + 0.006)
 
-# (d) E7 halophilic case study
 ax = axes[1, 1]
 if e7 is not None:
     s = e7.set_index("model").accuracy

@@ -8,20 +8,12 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
 
-# ================================================================
-# SIGMOID ACTIVATION
-# ================================================================
-
 def sigmoid(x):
     """
     Element-wise sigmoid activation.
     """
     return 1.0 / (1.0 + np.exp(-x))
 
-
-# ================================================================
-# RANDOM RVFL HIDDEN LAYER
-# ================================================================
 
 def init_random_layer(d, L, random_state=42):
     """
@@ -49,10 +41,6 @@ def init_random_layer(d, L, random_state=42):
     b = rng.uniform(-1.0, 1.0,size=(L,))
     return W, b
 
-
-# ================================================================
-# RVFL AUGMENTED FEATURE MATRIX
-# ================================================================
 
 def augment_features(X, W, b):
     """
@@ -86,10 +74,6 @@ def augment_features(X, W, b):
     return Z
 
 
-# ================================================================
-# NON-MEMBERSHIP FUNCTION
-# ================================================================
-
 def compute_non_membership(X, y, k=5):
     """
     Compute intuitionistic fuzzy non-membership degree.
@@ -122,7 +106,6 @@ def compute_non_membership(X, y, k=5):
             f"training samples. Got k={k}, N={N}."
         )
 
-    # k+1 because the sample itself is included
     nn = NearestNeighbors(
         n_neighbors=k + 1,
         algorithm='auto'
@@ -132,24 +115,18 @@ def compute_non_membership(X, y, k=5):
 
     _, indices = nn.kneighbors(X)
 
-    # Remove the sample itself
     neighbour_idx = indices[:, 1:]
 
     neighbour_labels = y[
         neighbour_idx
     ]
 
-    # Fraction of neighbours having different labels
     nu = (
         neighbour_labels != y[:, None]
     ).sum(axis=1) / k
 
     return nu
 
-
-# ================================================================
-# CLASS CENTROIDS
-# ================================================================
 
 def compute_class_centroids(X, y):
     """
@@ -174,10 +151,6 @@ def compute_class_centroids(X, y):
         for c in np.unique(y)
     }
 
-
-# ================================================================
-# GAUSSIAN SPREAD
-# ================================================================
 
 def mean_intraclass_distance(centroids):
     """
@@ -204,10 +177,6 @@ def mean_intraclass_distance(centroids):
         else 1.0
     )
 
-
-# ================================================================
-# ORIGINAL IFRVFLC MEMBERSHIP FUNCTION
-# ================================================================
 
 def compute_membership(
     X,
@@ -287,10 +256,6 @@ def compute_membership(
     )
 
 
-# ================================================================
-# HESITATION DEGREE
-# ================================================================
-
 def compute_hesitation(mu, nu):
     """
     Intuitionistic fuzzy hesitation degree.
@@ -306,10 +271,6 @@ def compute_hesitation(mu, nu):
         1.0
     )
 
-
-# ================================================================
-# ORIGINAL IFRVFLC PRODUCT WEIGHT
-# ================================================================
 
 def compute_product_weight(mu, nu):
     """
@@ -328,10 +289,6 @@ def compute_product_weight(mu, nu):
         1.0
     )
 
-
-# ================================================================
-# PROPOSED IFS SCORE
-# ================================================================
 
 def compute_ifs_score(
     mu,
@@ -389,10 +346,6 @@ def compute_ifs_score(
     )
 
 
-# ================================================================
-# OUTPUT WEIGHT SOLVER
-# ================================================================
-
 def solve_output_weights(
     Z,
     y,
@@ -433,14 +386,12 @@ def solve_output_weights(
         dtype=float
     )
 
-    # Numerical safety
     weights = np.clip(
         weights,
         1e-12,
         None
     )
 
-    # Weighted Z
     Z_weighted = Z * weights[:, None]
 
     A = (
@@ -457,7 +408,6 @@ def solve_output_weights(
         (weights * y)
     )
 
-    # Solve instead of explicitly calculating inverse
     beta = np.linalg.solve(
         A,
         b
@@ -507,29 +457,23 @@ class RWIFRVFL(BaseEstimator, ClassifierMixin):
         self.random_state = random_state
         self.normalize    = normalize
 
-    # ------------------------------------------------------------------ fit
     def fit(self, X, y):
         X, y = check_X_y(X, y)
         self.classes_ = np.unique(y)
         if len(self.classes_) != 2:
             raise ValueError('RW-IFRVFL is a binary classifier.')
 
-        # Map original labels → internal ±1
         y_ = np.where(y == self.classes_[0], -1.0, +1.0)
 
-        # Min-Max normalisation
         self.scaler_ = MinMaxScaler() if self.normalize else None
         Xn = self.scaler_.fit_transform(X) if self.normalize else X
 
         N, d = Xn.shape
 
-        # Random hidden layer (fixed after init)
         self.W_, self.b_ = init_random_layer(d, self.n_hidden, self.random_state)
 
-        # Augmented feature matrix
         Z = augment_features(Xn, self.W_, self.b_)
 
-        # Gaussian spread σ
         centroids = compute_class_centroids(Xn, y_)
         if self.sigma is not None:
             self.sigma_ = float(self.sigma)
@@ -537,39 +481,32 @@ class RWIFRVFL(BaseEstimator, ClassifierMixin):
             sigma_bar   = mean_intraclass_distance(centroids)
             self.sigma_ = self.sigma_scale * (sigma_bar if sigma_bar > 0 else 1.0)
 
-        # IFS triple — order matters: ν first, then µ
         nu           = compute_non_membership(Xn, y_, self.k)
         mu           = compute_membership(Xn, y_, nu, centroids, self.sigma_)
         pi, w        = compute_ifs_weights(mu, nu)
 
-        # Store for inspection
         self.mu_, self.nu_, self.pi_, self.weights_ = mu, nu, pi, w
 
-        # Closed-form output weights
         self.beta_ = solve_output_weights(Z, y_, w, self.lam)
         return self
 
-    # ---------------------------------------------------- decision_function
     def decision_function(self, X):
         check_is_fitted(self)
         X = check_array(X)
         Xn = self.scaler_.transform(X) if self.scaler_ is not None else X
         return augment_features(Xn, self.W_, self.b_) @ self.beta_
 
-    # ------------------------------------------------------------ predict
     def predict(self, X):
         scores = self.decision_function(X)
         internal = np.sign(scores)
         internal[internal == 0] = 1
         return np.where(internal == -1, self.classes_[0], self.classes_[1])
 
-    # -------------------------------------------------------- predict_proba
     def predict_proba(self, X):
         """Soft estimates via sigmoid of the decision score."""
         p1 = 1.0 / (1.0 + np.exp(-self.decision_function(X)))
         return np.column_stack([1 - p1, p1])
 
-    # ------------------------------------------------------------- evaluate
     def evaluate(self, X, y):
         """Return accuracy, F1, and AUC (the three paper metrics)."""
         y_pred = self.predict(X)

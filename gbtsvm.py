@@ -1,16 +1,8 @@
 """
 Granular-Ball Twin SVM (linear), scikit-learn wrapper.
 
-Follows the authors' reference code (reference/GBTSVM_orig) exactly; it fixes
-two bugs in the earlier wrapper (legacy/GBTSVM.py):
-
-1. The QP linear terms use the granular-ball *radii* (R1, R2). The old wrapper
-   passed the class labels instead, so R11 = -(1 + (-1)) = 0, the first QP
-   returned alpha = 0, w1 = b1 = 0, and every sample was predicted as the
-   positive class.
-2. Ball splitting must re-examine a freshly split ball (the index only advances
-   when a ball is not split). The old wrapper always advanced, leaving impure
-   balls.
+Follows the authors' public reference implementation: the QP linear terms use
+the granular-ball radii, and a freshly split ball is re-examined before moving on.
 """
 
 import hashlib
@@ -109,12 +101,10 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
         H = np.hstack([C1, np.ones((len(C1), 1))])
         G = np.hstack([C2, np.ones((len(C2), 1))])
 
-        # QP 1: plane close to the positive balls, away from the negative ones
         HHG = linalg.solve(H.T @ H + self.eps1 * np.eye(H.shape[1]), G.T)
         K1 = G @ HHG
         a1 = self._box_qp((K1 + K1.T) / 2, -(1.0 + R2), self.d1)
         z1 = -HHG @ a1
-        # QP 2: plane close to the negative balls
         QQP = linalg.solve(G.T @ G + self.eps2 * np.eye(G.shape[1]), H.T)
         K2 = H @ QQP
         a2 = self._box_qp((K2 + K2.T) / 2, -(1.0 + R1), self.d2)

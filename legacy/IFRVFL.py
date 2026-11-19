@@ -7,20 +7,12 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 
 
-# ================================================================
-# SIGMOID ACTIVATION
-# ================================================================
-
 def sigmoid(x):
     """
     Element-wise sigmoid activation.
     """
     return 1.0 / (1.0 + np.exp(-x))
 
-
-# ================================================================
-# RANDOM RVFL HIDDEN LAYER
-# ================================================================
 
 def init_random_layer(d, L, random_state=42):
     """
@@ -48,10 +40,6 @@ def init_random_layer(d, L, random_state=42):
     b = rng.uniform(-1.0, 1.0,size=(L,))
     return W, b
 
-
-# ================================================================
-# RVFL AUGMENTED FEATURE MATRIX
-# ================================================================
 
 def augment_features(X, W, b):
     """
@@ -85,10 +73,6 @@ def augment_features(X, W, b):
     return Z
 
 
-# ================================================================
-# NON-MEMBERSHIP FUNCTION
-# ================================================================
-
 def compute_non_membership(X, y, k=5):
     """
     Compute intuitionistic fuzzy non-membership degree.
@@ -121,7 +105,6 @@ def compute_non_membership(X, y, k=5):
             f"training samples. Got k={k}, N={N}."
         )
 
-    # k+1 because the sample itself is included
     nn = NearestNeighbors(
         n_neighbors=k + 1,
         algorithm='auto'
@@ -131,24 +114,18 @@ def compute_non_membership(X, y, k=5):
 
     _, indices = nn.kneighbors(X)
 
-    # Remove the sample itself
     neighbour_idx = indices[:, 1:]
 
     neighbour_labels = y[
         neighbour_idx
     ]
 
-    # Fraction of neighbours having different labels
     nu = (
         neighbour_labels != y[:, None]
     ).sum(axis=1) / k
 
     return nu
 
-
-# ================================================================
-# CLASS CENTROIDS
-# ================================================================
 
 def compute_class_centroids(X, y):
     """
@@ -173,10 +150,6 @@ def compute_class_centroids(X, y):
         for c in np.unique(y)
     }
 
-
-# ================================================================
-# GAUSSIAN SPREAD
-# ================================================================
 
 def mean_intraclass_distance(centroids):
     """
@@ -203,10 +176,6 @@ def mean_intraclass_distance(centroids):
         else 1.0
     )
 
-
-# ================================================================
-# ORIGINAL IFRVFLC MEMBERSHIP FUNCTION
-# ================================================================
 
 def compute_membership(
     X,
@@ -286,10 +255,6 @@ def compute_membership(
     )
 
 
-# ================================================================
-# HESITATION DEGREE
-# ================================================================
-
 def compute_hesitation(mu, nu):
     """
     Intuitionistic fuzzy hesitation degree.
@@ -305,10 +270,6 @@ def compute_hesitation(mu, nu):
         1.0
     )
 
-
-# ================================================================
-# ORIGINAL IFRVFLC PRODUCT WEIGHT
-# ================================================================
 
 def compute_product_weight(mu, nu):
     """
@@ -327,10 +288,6 @@ def compute_product_weight(mu, nu):
         1.0
     )
 
-
-# ================================================================
-# PROPOSED IFS SCORE
-# ================================================================
 
 def compute_ifs_score(
     mu,
@@ -388,10 +345,6 @@ def compute_ifs_score(
     )
 
 
-# ================================================================
-# OUTPUT WEIGHT SOLVER
-# ================================================================
-
 def solve_output_weights(
     Z,
     y,
@@ -432,14 +385,12 @@ def solve_output_weights(
         dtype=float
     )
 
-    # Numerical safety
     weights = np.clip(
         weights,
         1e-12,
         None
     )
 
-    # Weighted Z
     Z_weighted = Z * weights[:, None]
 
     A = (
@@ -456,7 +407,6 @@ def solve_output_weights(
         (weights * y)
     )
 
-    # Solve instead of explicitly calculating inverse
     beta = np.linalg.solve(
         A,
         b
@@ -509,32 +459,20 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
         self.random_state = random_state
         self.normalize = normalize
 
-    # ================================================================
-    # FIT
-    # ================================================================
 
     def fit(self, X, y):
 
         X, y = check_X_y(X, y)
 
-        # ------------------------------------------------------------
-        # Binary classification
-        # ------------------------------------------------------------
 
         self.classes_ = np.unique(y)
 
         if len(self.classes_) != 2:
             raise ValueError("IFRVFLC is a binary classifier.")
 
-        # ------------------------------------------------------------
-        # Map labels to {-1,+1}
-        # ------------------------------------------------------------
 
         y_ = np.where(y == self.classes_[0], -1.0, +1.0)
 
-        # ------------------------------------------------------------
-        # Normalization
-        # ------------------------------------------------------------
 
         self.scaler_ = (MinMaxScaler() if self.normalize else None)
 
@@ -542,9 +480,6 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
 
         N, d = Xn.shape
 
-        # ------------------------------------------------------------
-        # Random RVFL hidden layer
-        # ------------------------------------------------------------
 
         self.W_, self.b_ = init_random_layer(
             d,
@@ -552,9 +487,6 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
             self.random_state
         )
 
-        # ------------------------------------------------------------
-        # Augmented RVFL feature matrix
-        # ------------------------------------------------------------
 
         Z = augment_features(
             Xn,
@@ -562,9 +494,6 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
             self.b_
         )
 
-        # ------------------------------------------------------------
-        # Gaussian spread
-        # ------------------------------------------------------------
 
         centroids = compute_class_centroids(
             Xn,
@@ -587,22 +516,13 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
                 else 1.0
             )
 
-        # ============================================================
-        # ORIGINAL IFRVFL MEMBERSHIP CONSTRUCTION
-        # ============================================================
 
-        # Non-membership
         nu = compute_non_membership(
             Xn,
             y_,
             self.k
         )
 
-        # Membership
-        #
-        # This is intentionally the ORIGINAL membership construction.
-        #
-        # Do NOT replace this when implementing IFRVFLC-SF.
         mu = compute_membership(
             Xn,
             y_,
@@ -611,35 +531,23 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
             self.sigma_
         )
 
-        # ------------------------------------------------------------
-        # Intuitionistic hesitation
-        # ------------------------------------------------------------
 
         pi = 1.0 - mu - nu
 
-        # Numerical protection
         pi = np.clip(
             pi,
             0.0,
             1.0
         )
 
-        # ============================================================
-        # ORIGINAL IFRVFLC PRODUCT WEIGHT
-        # ============================================================
 
-        # Original product weight
         w = mu * (1.0 - nu)
 
-        # Store IFS components
         self.mu_ = mu
         self.nu_ = nu
         self.pi_ = pi
         self.weights_ = w
 
-        # ------------------------------------------------------------
-        # Output weights
-        # ------------------------------------------------------------
 
         self.beta_ = solve_output_weights(
             Z,
@@ -650,9 +558,6 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
 
         return self
 
-    # ================================================================
-    # DECISION FUNCTION
-    # ================================================================
 
     def decision_function(self, X):
 
@@ -683,9 +588,6 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
 
         return Z @ self.beta_
 
-    # ================================================================
-    # PREDICT
-    # ================================================================
 
     def predict(self, X):
 
@@ -701,9 +603,6 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
             self.classes_[1]
         )
 
-    # ================================================================
-    # PREDICT PROBA
-    # ================================================================
 
     def predict_proba(self, X):
 
@@ -718,9 +617,6 @@ class IFRVFLC(BaseEstimator, ClassifierMixin):
             p1
         ])
 
-    # ================================================================
-    # EVALUATE
-    # ================================================================
 
     def evaluate(self, X, y):
 
@@ -791,17 +687,11 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
         self.random_state = random_state
         self.normalize = normalize
 
-    # ============================================================
-    # FIT
-    # ============================================================
 
     def fit(self, X, y):
 
         X, y = check_X_y(X, y)
 
-        # --------------------------------------------------------
-        # Classes
-        # --------------------------------------------------------
 
         self.classes_ = np.unique(y)
 
@@ -810,9 +700,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
                 "IFRVFLC-SF is a binary classifier."
             )
 
-        # --------------------------------------------------------
-        # Internal labels
-        # --------------------------------------------------------
 
         y_internal = np.where(
             y == self.classes_[0],
@@ -820,9 +707,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
             +1.0
         )
 
-        # --------------------------------------------------------
-        # Normalization
-        # --------------------------------------------------------
 
         self.scaler_ = (
             MinMaxScaler()
@@ -838,9 +722,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
 
         N, d = Xn.shape
 
-        # --------------------------------------------------------
-        # Random RVFL layer
-        # --------------------------------------------------------
 
         self.W_, self.b_ = init_random_layer(
             d,
@@ -848,9 +729,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
             self.random_state
         )
 
-        # --------------------------------------------------------
-        # RVFL augmented matrix
-        # --------------------------------------------------------
 
         Z = augment_features(
             Xn,
@@ -858,9 +736,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
             self.b_
         )
 
-        # --------------------------------------------------------
-        # Centroids
-        # --------------------------------------------------------
 
         centroids = compute_class_centroids(
             Xn,
@@ -869,9 +744,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
 
         self.centroids_ = centroids
 
-        # --------------------------------------------------------
-        # Gaussian spread
-        # --------------------------------------------------------
 
         if self.sigma is not None:
 
@@ -895,9 +767,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
                 )
             )
 
-        # ========================================================
-        # EXACTLY THE SAME MEMBERSHIP CONSTRUCTION AS IFRVFLC
-        # ========================================================
 
         nu = compute_non_membership(
             Xn,
@@ -918,10 +787,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
             nu
         )
 
-        # ========================================================
-        # ONLY CHANGE:
-        # ORIGINAL PRODUCT WEIGHT -> PROPOSED IFS SCORE
-        # ========================================================
 
         weights = compute_ifs_score(
             mu,
@@ -930,18 +795,12 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
             gamma=self.gamma
         )
 
-        # --------------------------------------------------------
-        # Store
-        # --------------------------------------------------------
 
         self.mu_ = mu
         self.nu_ = nu
         self.pi_ = pi
         self.weights_ = weights
 
-        # --------------------------------------------------------
-        # SAME OUTPUT SOLVER AS IFRVFLC
-        # --------------------------------------------------------
 
         self.beta_ = solve_output_weights(
             Z,
@@ -952,9 +811,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
 
         return self
 
-    # ============================================================
-    # DECISION FUNCTION
-    # ============================================================
 
     def decision_function(self, X):
 
@@ -983,9 +839,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
 
         return Z @ self.beta_
 
-    # ============================================================
-    # PREDICT
-    # ============================================================
 
     def predict(self, X):
 
@@ -1001,9 +854,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
             self.classes_[1]
         )
 
-    # ============================================================
-    # PREDICT PROBA
-    # ============================================================
 
     def predict_proba(self, X):
 
@@ -1024,9 +874,6 @@ class IFRVFLC_SF(BaseEstimator, ClassifierMixin):
             p1
         ])
 
-    # ============================================================
-    # EVALUATE
-    # ============================================================
 
     def evaluate(self, X, y):
 

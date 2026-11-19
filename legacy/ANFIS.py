@@ -2,10 +2,6 @@ import numpy as np
 import torch
 
 
-# ============================================================
-# 1. Calculate Gaussian Membership Function Parameters
-# ============================================================
-
 def calculateMfParams(X, L):
     """
     Calculate Gaussian Membership Function parameters.
@@ -32,7 +28,6 @@ def calculateMfParams(X, L):
         mean = torch.mean(feature)
         std = torch.std(feature)
 
-        # Avoid sigma = 0
         std = torch.clamp(std, min=1e-6)
 
         centers = [
@@ -56,10 +51,6 @@ def calculateMfParams(X, L):
     return params
 
 
-# ============================================================
-# 2. Normalized Rule Weights
-# ============================================================
-
 def normalizedWeights(membershipValues):
     """
     Calculate normalized fuzzy rule strengths.
@@ -75,23 +66,16 @@ def normalizedWeights(membershipValues):
         Shape: (samples, rules)
     """
 
-    # Product across features
     weights = torch.prod(membershipValues, dim=1)
 
-    # Sum of rule strengths
     weights_sum = torch.sum(weights, dim=1, keepdim=True)
 
-    # Avoid division by zero
     weights_sum = torch.clamp(weights_sum, min=1e-12)
 
     normalized_weights = weights / weights_sum
 
     return normalized_weights
 
-
-# ============================================================
-# 3. Gaussian Membership Function
-# ============================================================
 
 def gaussian_membership(X, c, sigma):
     """
@@ -111,15 +95,10 @@ def gaussian_membership(X, c, sigma):
     return result
 
 
-# ============================================================
-# 4. Build A Matrix
-# ============================================================
-
 def calculate_A(X, weights):
 
     X_copy = X.clone()
 
-    # Bias term
     ones = torch.ones(X.size(0), 1)
 
     newX = torch.cat((X_copy, ones), dim=1)
@@ -137,10 +116,6 @@ def calculate_A(X, weights):
 
     return torch.stack(A)
 
-
-# ============================================================
-# 5. Hybrid Fuzzy Classification Algorithm
-# ============================================================
 
 class HybridAlgorithmClassifier:
 
@@ -171,9 +146,6 @@ class HybridAlgorithmClassifier:
         self.lambda1 = lambda1
         self.lambda2 = lambda2
 
-        # ----------------------------------------------------
-        # Convert X and y
-        # ----------------------------------------------------
 
         X = np.asarray(X)
 
@@ -187,15 +159,11 @@ class HybridAlgorithmClassifier:
             dtype=torch.float32
         )
 
-        # ----------------------------------------------------
-        # Encode class labels
-        # ----------------------------------------------------
 
         self.classes_ = np.unique(y)
 
         self.n_classes = len(self.classes_)
 
-        # Convert original labels -> 0,1,2,...
         self.y_encoded = np.searchsorted(
             self.classes_,
             y
@@ -206,18 +174,12 @@ class HybridAlgorithmClassifier:
             dtype=torch.long
         )
 
-        # ----------------------------------------------------
-        # One-hot target matrix
-        # ----------------------------------------------------
 
         self.Y_onehot = torch.nn.functional.one_hot(
             self.y,
             num_classes=self.n_classes
         ).float()
 
-        # ----------------------------------------------------
-        # Membership parameters
-        # ----------------------------------------------------
 
         self.mf_params = calculateMfParams(
             self.X,
@@ -229,10 +191,6 @@ class HybridAlgorithmClassifier:
         self.A = None
         self.weights = None
 
-
-    # ========================================================
-    # Membership Values
-    # ========================================================
 
     def _membership_values(self, X, params=None):
 
@@ -283,20 +241,12 @@ class HybridAlgorithmClassifier:
         return membership
 
 
-    # ========================================================
-    # Rule Weights
-    # ========================================================
-
     def _rule_weights(self, membership):
 
         return normalizedWeights(
             membership
         )
 
-
-    # ========================================================
-    # Build A
-    # ========================================================
 
     def _build_A(self, X, weights):
 
@@ -316,19 +266,12 @@ class HybridAlgorithmClassifier:
         )
 
 
-    # ========================================================
-    # Solve Consequent Parameters
-    # ========================================================
-
     def _solve_D(self, A):
 
         A_np = A.detach().numpy()
 
         Y_np = self.Y_onehot.detach().numpy()
 
-        # ----------------------------------------------------
-        # Ridge-regularized least squares
-        # ----------------------------------------------------
 
         ATA = A_np.T @ A_np
 
@@ -347,68 +290,42 @@ class HybridAlgorithmClassifier:
         )
 
 
-    # ========================================================
-    # Fit
-    # ========================================================
-
     def fit(self):
 
-        # ----------------------------------------------------
-        # Step 1: Membership values
-        # ----------------------------------------------------
 
         membership = self._membership_values(
             self.X,
             self.mf_params
         )
 
-        # ----------------------------------------------------
-        # Step 2: Rule weights
-        # ----------------------------------------------------
 
         weights = self._rule_weights(
             membership
         )
 
-        # ----------------------------------------------------
-        # Step 3: Construct A
-        # ----------------------------------------------------
 
         A = self._build_A(
             self.X,
             weights
         )
 
-        # Store
         self.A = A
         self.weights = weights
 
-        # ----------------------------------------------------
-        # Step 4: Learn consequent parameters
-        # ----------------------------------------------------
 
         self.D = self._solve_D(A)
 
-        # ----------------------------------------------------
-        # Step 5: Training logits
-        # ----------------------------------------------------
 
         logits = A @ self.D
 
         self.train_logits = logits
 
-        # ----------------------------------------------------
-        # Step 6: Probabilities
-        # ----------------------------------------------------
 
         self.train_probabilities = torch.softmax(
             logits,
             dim=1
         )
 
-        # ----------------------------------------------------
-        # Step 7: Predictions
-        # ----------------------------------------------------
 
         predicted_encoded = torch.argmax(
             self.train_probabilities,
@@ -422,18 +339,10 @@ class HybridAlgorithmClassifier:
         return self
 
 
-    # ========================================================
-    # Forward
-    # ========================================================
-
     def forward(self):
 
         return self.fit()
 
-
-    # ========================================================
-    # Predict Probabilities
-    # ========================================================
 
     def predict_proba(self, X):
 
@@ -445,27 +354,22 @@ class HybridAlgorithmClassifier:
         if X.ndim == 1:
             X = X.reshape(1, -1)
 
-        # Membership
         membership = self._membership_values(
             X,
             self.mf_params
         )
 
-        # Rule weights
         weights = self._rule_weights(
             membership
         )
 
-        # A matrix
         A = self._build_A(
             X,
             weights
         )
 
-        # Class logits
         logits = A @ self.D
 
-        # Softmax
         probabilities = torch.softmax(
             logits,
             dim=1
@@ -473,10 +377,6 @@ class HybridAlgorithmClassifier:
 
         return probabilities.detach().numpy()
 
-
-    # ========================================================
-    # Predict Class
-    # ========================================================
 
     def predict(self, X):
 

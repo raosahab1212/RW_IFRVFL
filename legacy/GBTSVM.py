@@ -13,10 +13,8 @@ class GranularBall:
     """Represents one granular ball."""
 
     def __init__(self, data):
-        # data = [features..., label, index]
         self.data = data[:, :]
 
-        # Exclude label and index
         self.data_no_label = data[:, :-2]
 
         self.num, self.dim = self.data_no_label.shape
@@ -33,7 +31,6 @@ class GranularBall:
         label = max(count, key=count.get)
         purity = count[label] / self.num
 
-        # Radius = average Euclidean distance from center
         arr = self.data_no_label - self.center
         distances = np.sqrt(np.sum(arr ** 2, axis=1))
 
@@ -67,7 +64,6 @@ class GranularBall:
 
             return ball1, ball2
 
-        # Fallback
         ball1 = GranularBall(self.data[:1, :])
         ball2 = GranularBall(self.data[1:, :])
 
@@ -184,9 +180,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
         self.eps1 = eps1
         self.eps2 = eps2
 
-    # ---------------------------------------------------------
-    # Granular Ball Generation
-    # ---------------------------------------------------------
 
     def _generate_balls(self, X, y):
 
@@ -194,7 +187,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
 
         indices = np.arange(n_samples).reshape(-1, 1)
 
-        # [X, y, index]
         data = np.hstack(
             (
                 X,
@@ -218,7 +210,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
         radii = gb.get_radii()
         labels = gb.get_labels()
 
-        # [center..., radius, label]
         ball_data = np.hstack(
             (
                 centers,
@@ -229,19 +220,14 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
 
         return ball_data
 
-    # ---------------------------------------------------------
-    # GBTSVM Training
-    # ---------------------------------------------------------
 
     def _train_gbtsvm(self, train_data):
 
-        # Class +1
         A = train_data[
             train_data[:, -1] == 1,
             :-1
         ]
 
-        # Class -1
         B = train_data[
             train_data[:, -1] == -1,
             :-1
@@ -252,7 +238,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
                 "Both classes must contain at least one granular ball."
             )
 
-        # Remove labels
         C1 = A[:, :-1]
         C2 = B[:, :-1]
 
@@ -275,9 +260,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
         H1 = np.hstack((C1, e1))
         G1 = np.hstack((C2, e2))
 
-        # -----------------------------------------------------
-        # First QP
-        # -----------------------------------------------------
 
         HH1 = (
             H1.T @ H1
@@ -338,9 +320,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
         self.w1_ = z[:-1]
         self.b1_ = z[-1]
 
-        # -----------------------------------------------------
-        # Second QP
-        # -----------------------------------------------------
 
         QQ = G1.T @ G1
 
@@ -401,9 +380,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
         self.w2_ = z[:-1]
         self.b2_ = z[-1]
 
-    # ---------------------------------------------------------
-    # Fit
-    # ---------------------------------------------------------
 
     def fit(self, X, y):
 
@@ -431,7 +407,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
 
         self.classes_ = classes
 
-        # Map arbitrary binary labels to {-1, +1}
         self._class_to_internal = {
             classes[0]: -1,
             classes[1]: 1
@@ -447,7 +422,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
             for label in y
         ])
 
-        # Generate granular balls
         ball_data = self._generate_balls(
             X,
             y_internal
@@ -459,12 +433,10 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
                 "two balls. Try reducing min_ball_size or purity."
             )
 
-        # Store granular-ball information
         self.ball_centers_ = ball_data[:, :-2]
         self.ball_radii_ = ball_data[:, -2]
         self.ball_labels_ = ball_data[:, -1]
 
-        # Train GBTSVM
         self._train_gbtsvm(ball_data)
 
         self.n_features_in_ = X.shape[1]
@@ -473,9 +445,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
 
         return self
 
-    # ---------------------------------------------------------
-    # Decision Function
-    # ---------------------------------------------------------
 
     def decision_function(self, X):
 
@@ -493,8 +462,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
         y1 = X @ self.w1_ + self.b1_
         y2 = X @ self.w2_ + self.b2_
 
-        # GBTSVM chooses the hyperplane with
-        # minimum absolute distance.
         score = np.where(
             np.abs(y1) <= np.abs(y2),
             y1,
@@ -503,9 +470,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
 
         return score
 
-    # ---------------------------------------------------------
-    # Predict
-    # ---------------------------------------------------------
 
     def predict(self, X):
 
@@ -528,9 +492,6 @@ class GBTSVMClassifier(BaseEstimator, ClassifierMixin):
             for p in internal_prediction
         ])
 
-    # ---------------------------------------------------------
-    # Score
-    # ---------------------------------------------------------
 
     def score(self, X, y):
 

@@ -29,7 +29,8 @@ BENCHMARK = [
     "magic", "mammographic", "monk-2", "mushroom", "phoneme", "pima",
     "wisconsin", "diabetes",
 ]
-CASE_STUDIES = ["protein"]           # PeNGaRoo raw file not in this folder yet
+# halophilic: Zhang & Ge (2013) 139+139 benchmark, built by build_halophilic.py
+CASE_STUDIES = ["halophilic"]
 LARGE = {"adult", "magic", "mushroom", "phoneme", "diabetes", "protein"}
 
 
@@ -65,7 +66,10 @@ def _raw(name):
     if name == "diabetes":
         df = pd.read_csv(p("diabetes_binary_5050split_health_indicators_BRFSS2015.csv"))
         return df.drop(columns="Diabetes_binary"), df["Diabetes_binary"].astype(int).astype(str), []
-    if name == "protein":
+    if name == "halophilic":
+        df = pd.read_csv(p("halophilic.csv"))
+        return df.drop(columns=["class", "accession"]), df["class"], []
+    if name == "protein":                       # unidentified FIR/Non-FIR file, not used
         df = pd.read_csv(p("protien.csv"))
         return df.drop(columns="class"), df["class"], []
     return _read_keel(p(f"{name}.dat"))

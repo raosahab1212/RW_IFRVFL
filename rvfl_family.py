@@ -22,9 +22,11 @@ Variants (`variant=`):
     rw            mu = (1-nu) g,  w = (1 + mu - nu) / 2   proposed RW-IFRVFL
     rw_ha         mu = (1-nu) g,  w = Ha et al. (2013) IF score
     rw_shuffled   RW weights randomly permuted across samples (control)
-    ifrvflc       IF scheme of the IFTSVM / IF-RVFL line (Ha 2013, Rezvani 2019):
-                  mu  = 1 - ||x - c_y|| / (r_y + delta),  r_y = class radius
-                  rho = share of other-class points within radius alpha
+    ifrvflc       Mishra, Gupta & Hazarika (2023), Eqs. 22-24:
+                  mu  = 1 - ||phi(x) - C_y|| / (r_y + delta)   Gaussian-kernel space,
+                        k(u, v) = exp(-gamma ||u - v||^2), r_y = class radius
+                  rho = share of other-class points within input-space radius
+                        `radius` (self included, as in Eq. 23)
                   nu  = (1 - mu) rho
                   w   = Ha score
 """
@@ -75,6 +77,53 @@ def _neighbours(X):
     return out_d, out_i
 
 
+_D2_CACHE = {}
+_D2_CACHE_N = 6000          # keep full distance matrices only for tuning-sized data
+_BLOCK = 10_000_000         # elements per distance block for large data
+
+
+def _sq_dist_blocks(X):
+    """Yield (rows, squared distances of those rows to all of X)."""
+    n = X.shape[0]
+    key = hashlib.md5(np.ascontiguousarray(X).view(np.uint8)).hexdigest() + str(X.shape)
+    hit = _D2_CACHE.get(key)
+    if hit is not None:
+        yield slice(0, n), hit
+        return
+    sq = np.einsum("ij,ij->i", X, X)
+    step = n if n <= _D2_CACHE_N else max(1, _BLOCK // n)
+    for s in range(0, n, step):
+        rows = slice(s, min(s + step, n))
+        d2 = np.maximum(sq[rows, None] + sq[None, :] - 2.0 * (X[rows] @ X.T), 0.0)
+        if n <= _D2_CACHE_N:
+            _D2_CACHE.clear()
+            _D2_CACHE[key] = d2
+        yield rows, d2
+
+
+def _mishra_if(X, y, gamma, radius, delta):
+    """Membership and non-membership of Mishra et al. (2023), Eqs. 22-23."""
+    n = X.shape[0]
+    same_k = np.empty(n)            # sum of k(x_i, x_j) over same-class j
+    cnt = np.empty(n)
+    het = np.empty(n)
+    r2 = radius ** 2
+    for rows, d2 in _sq_dist_blocks(X):
+        same = y[rows, None] == y[None, :]
+        inside = d2 <= r2
+        cnt[rows] = inside.sum(axis=1)
+        het[rows] = (inside & ~same).sum(axis=1)
+        same_k[rows] = np.where(same, np.exp(-gamma * d2), 0.0).sum(axis=1)
+    mu = np.empty(n)
+    for c in (-1.0, 1.0):
+        m = y == c
+        s = same_k[m] / m.sum()                      # mean k(x_i, class members)
+        dist = np.sqrt(np.maximum(1.0 - 2.0 * s + s.mean(), 0.0))
+        mu[m] = 1.0 - dist / (dist.max() + delta)
+    rho = het / np.maximum(cnt, 1)
+    return mu, (1.0 - mu) * rho
+
+
 def _non_membership(X, y, k):
     _, idx = _neighbours(X)
     if k > idx.shape[1]:
@@ -98,14 +147,15 @@ class FuzzyRVFL(BaseEstimator, ClassifierMixin):
     """Weighted RVFL with pluggable sample-weight construction (binary)."""
 
     def __init__(self, variant="rw", n_hidden=100, lam=1e-3, k=5,
-                 sigma_scale=1.0, alpha_scale=1.0, delta=1e-4,
+                 sigma_scale=1.0, gamma=1.0, radius=0.5, delta=1e-4,
                  random_state=42):
         self.variant = variant
         self.n_hidden = n_hidden
         self.lam = lam
         self.k = k
         self.sigma_scale = sigma_scale
-        self.alpha_scale = alpha_scale
+        self.gamma = gamma
+        self.radius = radius
         self.delta = delta
         self.random_state = random_state
 
@@ -115,24 +165,13 @@ class FuzzyRVFL(BaseEstimator, ClassifierMixin):
         if v == "rvfl":
             return np.ones(n)
 
-        cents = {c: X[y == c].mean(axis=0) for c in (-1.0, 1.0)}
-        dist_c = np.linalg.norm(X - np.where(y[:, None] > 0, cents[1.0], cents[-1.0]), axis=1)
-
         if v == "ifrvflc":
-            mu = np.empty(n)
-            for c in (-1.0, 1.0):
-                m = y == c
-                r = dist_c[m].max()
-                mu[m] = 1.0 - dist_c[m] / (r + self.delta)
-            nd, ni = _neighbours(X)
-            alpha = self.alpha_scale * np.median(nd[:, min(4, nd.shape[1] - 1)])
-            inside = nd <= alpha
-            hetero = (y[ni] != y[:, None]) & inside
-            cnt = inside.sum(axis=1)
-            rho = np.where(cnt > 0, hetero.sum(axis=1) / np.maximum(cnt, 1), 0.0)
-            nu = (1.0 - mu) * rho
+            mu, nu = _mishra_if(X, y, self.gamma, self.radius, self.delta)
             self.mu_, self.nu_ = mu, nu
             return _ha_score(mu, nu)
+
+        cents = {c: X[y == c].mean(axis=0) for c in (-1.0, 1.0)}
+        dist_c = np.linalg.norm(X - np.where(y[:, None] > 0, cents[1.0], cents[-1.0]), axis=1)
 
         sep = np.linalg.norm(cents[1.0] - cents[-1.0])
         self.sigma_ = self.sigma_scale * (sep if sep > 0 else 1.0)

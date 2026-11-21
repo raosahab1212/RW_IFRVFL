@@ -134,7 +134,9 @@ REGISTRY = {
              {"eta1": [0.01, 0.1, 1, 10], "lambd1": [1e-3, 1e-1, 1],
               "mew": [2.0 ** e for e in range(-3, 6)]}),
     "RVFL": (_rvfl("rvfl"), RVFL_SPACE),
-    "IFRVFLC": (_rvfl("ifrvflc"), {**RVFL_SPACE, "alpha_scale": [0.5, 1, 2, 4]}),
+    # kernel width and neighbourhood radius grids from Mishra et al. (2023), Sec. 4
+    "IFRVFLC": (_rvfl("ifrvflc"), {**RVFL_SPACE, "gamma": [2.0 ** e for e in range(-5, 6)],
+                                   "radius": [round(0.1 * i, 1) for i in range(1, 11)]}),
     "RW-IFRVFL": (_rvfl("rw"), FULL_SPACE),
     "abl:fuzzy": (_rvfl("fuzzy"), GAUSS_SPACE),
     "abl:nonmem": (_rvfl("nonmem"), {**RVFL_SPACE, "k": K_NN}),

@@ -27,10 +27,10 @@ EXPERIMENTS = {
 # Rough seconds per outer fold with the full protocol (30 configs).
 SMALL_COST = {"SVM": 15, "RF": 200, "XGBoost": 110, "LightGBM": 25, "CatBoost": 450,
               "NB": 5, "KNN": 6, "NF-RVFL": 12, "ANFIS": 350, "GBTSVM": 600,
-              "TRKM": 15, "RVFL": 8, "IFRVFLC": 8, "RW-IFRVFL": 9}
+              "TRKM": 15, "RVFL": 8, "IFRVFLC": 15, "RW-IFRVFL": 9}
 LARGE_COST = {"SVM": 420, "RF": 520, "XGBoost": 190, "LightGBM": 95, "CatBoost": 400,
               "NB": 5, "KNN": 20, "NF-RVFL": 35, "ANFIS": 7200, "GBTSVM": 1020,
-              "TRKM": 215, "RVFL": 30, "IFRVFLC": 65, "RW-IFRVFL": 60}
+              "TRKM": 215, "RVFL": 30, "IFRVFLC": 400, "RW-IFRVFL": 60}
 WIDE = {"protein": 3.0, "mushroom": 1.5, "adult": 1.0}   # many encoded features
 
 

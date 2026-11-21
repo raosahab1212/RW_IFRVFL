@@ -169,6 +169,7 @@ def run_outer(name, X, y, dataset, label_noise=0.0, feat_noise=0.0, tune_params=
         # caches speed up tuning only; the timed final fit must pay its own neighbour/ball cost
         import gbtsvm, rvfl_family
         rvfl_family._NN_CACHE.clear()
+        rvfl_family._D2_CACHE.clear()
         gbtsvm._BALL_CACHE.clear()
         r = fit_score(name, dict(params), X.iloc[tr[keep]], ytr[keep], X.iloc[te], y[te],
                       feat_noise, seed)

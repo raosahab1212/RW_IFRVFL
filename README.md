@@ -9,7 +9,8 @@ by these scripts; tables are generated from the result CSVs.
 | File | Purpose |
 |---|---|
 | `datasets.py` | Loads the 14 benchmark datasets + protein case study; no preprocessing, no oversampling. `python datasets.py` prints the dataset summary table. |
-| `rvfl_family.py` | One RVFL estimator (`FuzzyRVFL`) covering RVFL, RW-IFRVFL, IFRVFLC and all ablation variants (same random layer and solver). IFRVFLC follows Mishra, Gupta & Hazarika (2023), Eqs. 22–24, with their kernel-width and radius grids. |
+| `rw_ifrvfl.py` | RW-IFRVFL implemented step by step from the manuscript (Algorithm 1; spread from Sec. 4.4; search space from Table 5). Used for RW-IFRVFL in every experiment. |
+| `rvfl_family.py` | One RVFL estimator (`FuzzyRVFL`) covering RVFL, IFRVFLC and all ablation variants (same random layer and solver; its `rw` variant equals `rw_ifrvfl.py`). IFRVFLC follows Mishra, Gupta & Hazarika (2023), Eqs. 22–24, with their kernel-width and radius grids. |
 | `gbtsvm.py` | GBTSVM, checked against the authors' reference code. |
 | `trkm.py` | TRKM, checked against the authors' reference code. |
 | `models.py` | Model registry, search spaces, equal tuning budget (30 configs). |

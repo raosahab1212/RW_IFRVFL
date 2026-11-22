@@ -9,8 +9,11 @@ Only the sample-weight construction differs between variants.
 Notation (all computed on the min-max scaled *training* data only):
     g_i   = exp(-||x_i - c_{y_i}||^2 / (2 sigma^2))     Gaussian centroid similarity
     nu_i  = share of the k nearest neighbours with a different label
-    sigma = sigma_scale * ||c_+ - c_-||                  (distance between the two
-                                                          class centroids)
+    sigma = sigma_scale * mean_i ||x_i - c_{y_i}||       (mean intra-class centroid
+                                                          distance, manuscript Sec. 4.4)
+
+The `rw` variant equals rw_ifrvfl.RWIFRVFL, the direct implementation of
+Algorithm 1 used for RW-IFRVFL in every experiment.
 
 Variants (`variant=`):
     rvfl          w = 1
@@ -173,8 +176,8 @@ class FuzzyRVFL(BaseEstimator, ClassifierMixin):
         cents = {c: X[y == c].mean(axis=0) for c in (-1.0, 1.0)}
         dist_c = np.linalg.norm(X - np.where(y[:, None] > 0, cents[1.0], cents[-1.0]), axis=1)
 
-        sep = np.linalg.norm(cents[1.0] - cents[-1.0])
-        self.sigma_ = self.sigma_scale * (sep if sep > 0 else 1.0)
+        sigma_bar = dist_c.mean()
+        self.sigma_ = self.sigma_scale * (sigma_bar if sigma_bar > 0 else 1.0)
         g = np.exp(-dist_c ** 2 / (2.0 * self.sigma_ ** 2))
 
         if v == "fuzzy":

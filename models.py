@@ -25,6 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "legacy"))
 
 from rvfl_family import FuzzyRVFL          # noqa: E402
+from rw_ifrvfl import RWIFRVFL, SEARCH_SPACE as RW_SPACE   # noqa: E402
 from gbtsvm import GBTSVMClassifier        # noqa: E402
 from trkm import TRKMClassifier            # noqa: E402
 
@@ -33,8 +34,6 @@ SEED = 42
 
 HIDDEN = [50, 100, 150, 200, 300]
 LAMBDA = [1e-4, 1e-3, 1e-2, 1e-1, 1.0]
-K_NN = [3, 5, 7, 9]
-SIGMA = [0.5, 1.0, 1.5, 2.0, 4.0]
 
 
 class ANFISClassifier(BaseEstimator, ClassifierMixin):
@@ -99,8 +98,9 @@ def _rvfl(variant):
 
 
 RVFL_SPACE = {"n_hidden": HIDDEN, "lam": LAMBDA}
-GAUSS_SPACE = {**RVFL_SPACE, "sigma_scale": SIGMA}
-FULL_SPACE = {**GAUSS_SPACE, "k": K_NN}
+# ablation variants share RW-IFRVFL's grid (manuscript Table 5), minus unused parameters
+GAUSS_SPACE = {p: v for p, v in RW_SPACE.items() if p != "k"}
+NONMEM_SPACE = {p: v for p, v in RW_SPACE.items() if p != "sigma_scale"}
 
 REGISTRY = {
     "SVM": (lambda **p: SVC(kernel="rbf", **p),
@@ -137,14 +137,14 @@ REGISTRY = {
     # kernel width and neighbourhood radius grids from Mishra et al. (2023), Sec. 4
     "IFRVFLC": (_rvfl("ifrvflc"), {**RVFL_SPACE, "gamma": [2.0 ** e for e in range(-5, 6)],
                                    "radius": [round(0.1 * i, 1) for i in range(1, 11)]}),
-    "RW-IFRVFL": (_rvfl("rw"), FULL_SPACE),
+    "RW-IFRVFL": (lambda **p: RWIFRVFL(random_state=SEED, **p), RW_SPACE),
     "abl:fuzzy": (_rvfl("fuzzy"), GAUSS_SPACE),
-    "abl:nonmem": (_rvfl("nonmem"), {**RVFL_SPACE, "k": K_NN}),
-    "abl:pw_unscaled": (_rvfl("pw_unscaled"), FULL_SPACE),
-    "abl:sf_unscaled": (_rvfl("sf_unscaled"), FULL_SPACE),
-    "abl:pw_scaled": (_rvfl("pw_scaled"), FULL_SPACE),
-    "abl:rw_ha": (_rvfl("rw_ha"), FULL_SPACE),
-    "abl:rw_shuffled": (_rvfl("rw_shuffled"), FULL_SPACE),
+    "abl:nonmem": (_rvfl("nonmem"), NONMEM_SPACE),
+    "abl:pw_unscaled": (_rvfl("pw_unscaled"), RW_SPACE),
+    "abl:sf_unscaled": (_rvfl("sf_unscaled"), RW_SPACE),
+    "abl:pw_scaled": (_rvfl("pw_scaled"), RW_SPACE),
+    "abl:rw_ha": (_rvfl("rw_ha"), RW_SPACE),
+    "abl:rw_shuffled": (_rvfl("rw_shuffled"), RW_SPACE),
 }
 
 BENCHMARK_MODELS = ["SVM", "RF", "XGBoost", "LightGBM", "CatBoost", "NB", "KNN",

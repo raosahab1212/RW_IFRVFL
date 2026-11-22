@@ -25,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "legacy"))
 
 from rvfl_family import FuzzyRVFL          # noqa: E402
-from rw_ifrvfl import RWIFRVFL, SEARCH_SPACE as RW_SPACE   # noqa: E402
+from rw_ifrvfl import EvidenceRVFL, RWIFRVFL, SEARCH_SPACE as RW_SPACE   # noqa: E402
 from gbtsvm import GBTSVMClassifier        # noqa: E402
 from trkm import TRKMClassifier            # noqa: E402
 
@@ -101,6 +101,18 @@ RVFL_SPACE = {"n_hidden": HIDDEN, "lam": LAMBDA}
 # ablation variants share RW-IFRVFL's grid (manuscript Table 5), minus unused parameters
 GAUSS_SPACE = {p: v for p, v in RW_SPACE.items() if p != "k"}
 NONMEM_SPACE = {p: v for p, v in RW_SPACE.items() if p != "sigma_scale"}
+# proposed revision: RVFL's own (n_hidden, lam) grid plus the IF parameters and the trust alpha;
+# k reaches 15 because averaging out heavy label noise needs larger neighbourhoods
+V2_SPACE = {"n_hidden": HIDDEN, "lam": LAMBDA, "k": [3, 5, 9, 15],
+            "sigma_scale": [0.5, 1.0, 1.5, 2.0], "alpha": [0.0, 0.5, 0.75, 1.0]}
+
+
+def _v2(**fixed):
+    return lambda **p: EvidenceRVFL(random_state=SEED, **fixed, **p)
+
+
+def _drop(space, *names):
+    return {p: v for p, v in space.items() if p not in names}
 
 REGISTRY = {
     "SVM": (lambda **p: SVC(kernel="rbf", **p),
@@ -145,7 +157,18 @@ REGISTRY = {
     "abl:pw_scaled": (_rvfl("pw_scaled"), RW_SPACE),
     "abl:rw_ha": (_rvfl("rw_ha"), RW_SPACE),
     "abl:rw_shuffled": (_rvfl("rw_shuffled"), RW_SPACE),
+    # proposed revision and its pre-registered ablations (same 30 sampled configurations
+    # wherever the space is the same)
+    "RW-IFRVFL2": (_v2(), V2_SPACE),
+    "v2:asym": (_v2(symmetric=False), V2_SPACE),                       # manuscript's nu_i = f_i
+    "v2:alpha1": (_v2(alpha=1.0), _drop(V2_SPACE, "alpha")),          # no trust calibration
+    "v2:noweight": (_v2(weight="none"), V2_SPACE),                     # hesitation unused
+    "v2:nocorr": (_v2(target="label"), V2_SPACE),                      # weights only
+    "v2:pignistic": (_v2(weight="none", target="pignistic"), V2_SPACE),
+    "v2:knnonly": (_v2(centroid=False), _drop(V2_SPACE, "sigma_scale")),
 }
+V2_MODELS = ["RW-IFRVFL2", "v2:asym", "v2:alpha1", "v2:noweight", "v2:nocorr", "v2:pignistic",
+             "v2:knnonly"]
 
 BENCHMARK_MODELS = ["SVM", "RF", "XGBoost", "LightGBM", "CatBoost", "NB", "KNN",
                     "NF-RVFL", "ANFIS", "GBTSVM", "TRKM", "RVFL", "IFRVFLC", "RW-IFRVFL"]

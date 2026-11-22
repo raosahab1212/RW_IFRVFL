@@ -9,7 +9,7 @@ by these scripts; tables are generated from the result CSVs.
 | File | Purpose |
 |---|---|
 | `datasets.py` | Loads the 14 benchmark datasets + protein case study; no preprocessing, no oversampling. `python datasets.py` prints the dataset summary table. |
-| `rw_ifrvfl.py` | RW-IFRVFL implemented step by step from the manuscript (Algorithm 1; spread from Sec. 4.4; search space from Table 5). Used for RW-IFRVFL in every experiment. |
+| `rw_ifrvfl.py` | RW-IFRVFL implemented step by step from the manuscript (Algorithm 1; spread from Sec. 4.4; search space from Table 5). Used for RW-IFRVFL in every experiment. Also `EvidenceRVFL` (model `RW-IFRVFL2`), the proposed revision: typicality-discounted IF evidence fused with the annotation, giving each sample a reliability weight (1 − hesitation) and a corrected target; its ablations are the `v2:*` models. |
 | `rvfl_family.py` | One RVFL estimator (`FuzzyRVFL`) covering RVFL, IFRVFLC and all ablation variants (same random layer and solver; its `rw` variant equals `rw_ifrvfl.py`). IFRVFLC follows Mishra, Gupta & Hazarika (2023), Eqs. 22–24, with their kernel-width and radius grids. |
 | `gbtsvm.py` | GBTSVM, checked against the authors' reference code. |
 | `trkm.py` | TRKM, checked against the authors' reference code. |
@@ -37,7 +37,8 @@ by these scripts; tables are generated from the result CSVs.
 
 Actions tab -> `experiments` -> Run workflow, choosing the experiment
 (`e1` benchmark, `e3` ablation, `e4_label` / `e4_feature` noise, `e4_label_abl` /
-`e4_feature_abl` ablation under noise, `e7` case study)
+`e4_feature_abl` ablation under noise, `e7` case study; `v2_e1`, `v2_label`, `v2_feature`,
+`v2_e7` run the proposed revision and its ablations on the same settings)
 and the number of shards. Each shard job uploads its per-task CSVs; the `merge`
 job combines them into `results-<experiment>` (`<exp>_all.csv`, `<exp>_summary.csv`).
 Re-running a failed job only recomputes tasks whose result files are missing

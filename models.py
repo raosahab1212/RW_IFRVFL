@@ -184,6 +184,25 @@ REGISTRY = {
     "v3:balance": (_v3(rule="balance"), V3_SPACE),                     # v2's weight and target
 }
 V3_MODELS = ["RW-IFRVFL3", "v3:sym", "v3:smallk", "v3:half", "v3:balance"]
+
+# Sensitivity of RW-IFRVFL3: one hyperparameter at a time around the values selected most
+# often in the tuned runs (alpha fixed at 0.75 so that the evidence is used); no tuning.
+SENS_DEFAULT = {"n_hidden": 100, "lam": 0.1, "k": 9, "sigma_scale": 1.5, "alpha": 0.75}
+SENS_SWEEPS = {"alpha": [0.0, 0.25, 0.5, 0.75, 1.0], "k": [3, 5, 9, 15, 25, 50],
+               "sigma_scale": [0.25, 0.5, 1.0, 1.5, 2.0, 4.0], "n_hidden": [50, 100, 150, 200, 300],
+               "lam": [1e-4, 1e-3, 1e-2, 1e-1, 1.0], "seed": [0, 1, 2, 3, 4]}
+REGISTRY["sens:default"] = (_v3(), {p: [v] for p, v in SENS_DEFAULT.items()})
+SENS_MODELS = ["sens:default"]
+for _p, _values in SENS_SWEEPS.items():
+    for _v in _values:
+        if _p != "seed" and _v == SENS_DEFAULT[_p]:
+            continue
+        _cfg = {**SENS_DEFAULT, **({} if _p == "seed" else {_p: _v})}
+        _fixed = {"random_state": _v} if _p == "seed" else {}
+        REGISTRY[f"sens:{_p}={_v:g}"] = (
+            lambda _fixed=_fixed, **q: SignedScoreRVFL(**{"random_state": SEED, **_fixed, **q}),
+            {c: [x] for c, x in _cfg.items()})
+        SENS_MODELS.append(f"sens:{_p}={_v:g}")
 V2_MODELS = ["RW-IFRVFL2", "v2:asym", "v2:alpha1", "v2:noweight", "v2:nocorr", "v2:pignistic",
              "v2:knnonly"]
 

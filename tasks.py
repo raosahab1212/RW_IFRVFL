@@ -9,7 +9,7 @@ Every shard job gets the same assignment because the packing is deterministic.
 """
 
 from datasets import BENCHMARK, CASE_STUDIES, LARGE
-from models import ABLATION_MODELS, BENCHMARK_MODELS, V2_MODELS, V3_MODELS
+from models import ABLATION_MODELS, BENCHMARK_MODELS, SENS_MODELS, V2_MODELS, V3_MODELS
 
 FOLDS = range(10)
 NOISE_DATASETS = ["australian", "wisconsin", "heart", "ionosphere", "magic"]
@@ -35,6 +35,9 @@ EXPERIMENTS = {
     "v3_label": dict(datasets=NOISE_DATASETS, models=V3_MODELS, label=NOISE_LEVELS, feat=[0.0]),
     "v3_feature": dict(datasets=NOISE_DATASETS, models=V3_MODELS, label=[0.0], feat=NOISE_LEVELS),
     "v3_e7": dict(datasets=CASE_STUDIES, models=V3_MODELS, label=[0.0], feat=[0.0]),
+    # sensitivity of RW-IFRVFL3 (fixed configurations, no tuning)
+    "sens_e1": dict(datasets=BENCHMARK, models=SENS_MODELS, label=[0.0], feat=[0.0]),
+    "sens_label": dict(datasets=NOISE_DATASETS, models=SENS_MODELS, label=[0.30], feat=[0.0]),
 }
 
 # Rough seconds per outer fold with the full protocol (30 configs).
@@ -50,6 +53,8 @@ WIDE = {"protein": 3.0, "mushroom": 1.5, "adult": 1.0}   # many encoded features
 def cost(t):
     _, ds, model, *_ = t
     base = LARGE_COST if ds in LARGE else SMALL_COST
+    if model.startswith("sens:"):                    # one fit per fold, no tuning
+        return (25 if ds in LARGE else 1) * WIDE.get(ds, 1.0)
     c = base.get(model, base["RW-IFRVFL"])          # ablation variants ~ RW-IFRVFL
     return c * WIDE.get(ds, 1.0)
 

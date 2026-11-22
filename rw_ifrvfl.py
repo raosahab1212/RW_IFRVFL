@@ -34,12 +34,38 @@ EvidenceRVFL keeps steps 1-4 and replaces steps 5-9 (proposed revision):
     alpha (nu_i - mu_i) > 1 - alpha, i.e. alpha g_i (2 f_i - 1) > 1 - alpha when symmetric.
 """
 
+import hashlib
+
 import numpy as np
 from sklearn.base import BaseEstimator, ClassifierMixin
+from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
 from rvfl_family import _neighbours     # Euclidean k-NN, self excluded, cached per matrix
+
+K_BIG = 50                              # neighbours kept for the large-neighbourhood models
+_NN_BIG = {}
+
+
+def _neighbours_big(X):
+    """Indices of the K_BIG nearest other samples of each row (cached per matrix)."""
+    key = hashlib.md5(np.ascontiguousarray(X).view(np.uint8)).hexdigest() + str(X.shape)
+    if key in _NN_BIG:
+        return _NN_BIG[key]
+    n = X.shape[0]
+    kq = min(K_BIG + 1, n)
+    idx = NearestNeighbors(n_neighbors=kq).fit(X).kneighbors(X, return_distance=False)
+    out = np.empty((n, kq - 1), dtype=int)
+    for r in range(n):
+        keep = idx[r] != r
+        if keep.all():                  # self not returned (many exact duplicates)
+            keep[-1] = False
+        out[r] = idx[r][keep]
+    if len(_NN_BIG) >= 32:
+        _NN_BIG.clear()
+    _NN_BIG[key] = out
+    return out
 
 # Table 5 of the manuscript
 SEARCH_SPACE = {
@@ -54,9 +80,9 @@ def _sigmoid(t):
     return 0.5 * (1.0 + np.tanh(0.5 * t))       # 1 / (1 + e^-t) without overflow
 
 
-def ifs_triple(Xn, y, k, sigma_scale, centroid=True, symmetric=False):
+def ifs_triple(Xn, y, k, sigma_scale, centroid=True, symmetric=False, big=False):
     """Steps 4-7: (mu, nu, pi) and sigma for scaled features Xn, labels y in {-1, +1}."""
-    _, idx = _neighbours(Xn)
+    idx = _neighbours_big(Xn) if big else _neighbours(Xn)[1]
     if k > idx.shape[1]:
         raise ValueError(f"k={k} exceeds the cached neighbours ({idx.shape[1]}).")
     nu = (y[idx[:, :k]] != y[:, None]).mean(axis=1)
@@ -155,5 +181,45 @@ class EvidenceRVFL(RWIFRVFL):
             raise ValueError(f"unknown target {self.target!r}")
         self.targets_ = bal * y
         self.weights_ = r if self.weight == "determinacy" else np.ones_like(r)
+        self._solve(Z, self.weights_, self.targets_)
+        return self
+
+
+class SignedScoreRVFL(RWIFRVFL):
+    """Proposed revision (v3): the IF score of the annotation fused with the evidence.
+
+        S_i  = (1 - alpha) + alpha (mu_i - nu_i)     Chen-Tan score of the fused IF number
+        w_i  = |S_i|,    y~_i = sign(S_i) y_i
+        beta = (Z^T D Z + lambda I)^{-1} Z^T D y~,   D = diag(w)
+    alpha = 0 is plain RVFL and alpha = 1/2 is the published weight (1 + mu_i - nu_i)/2.
+    For alpha > 1/2 a sample is relabelled when nu_i - mu_i > (1 - alpha)/alpha, and
+    samples whose evidence cancels (S_i = 0) get no weight. The manuscript's (mu, nu) are
+    used unless symmetric=True; rule="balance" uses the v2 weight/target (ablation).
+    """
+
+    def __init__(self, n_hidden=100, lam=1e-3, k=5, sigma_scale=1.0, alpha=0.5,
+                 symmetric=False, rule="signed", big=True, random_state=42):
+        super().__init__(n_hidden, lam, k, sigma_scale, random_state)
+        self.alpha = alpha
+        self.symmetric = symmetric
+        self.rule = rule
+        self.big = big
+
+    def fit(self, X, y):
+        Xn, Z, y = self._setup(X, y)
+        mu, nu, pi, self.sigma_ = ifs_triple(Xn, y, self.k, self.sigma_scale,
+                                             symmetric=self.symmetric, big=self.big)
+        a = self.alpha
+        mu_f, nu_f = (1.0 - a) + a * mu, a * nu
+        self.mu_, self.nu_, self.pi_ = mu_f, nu_f, 1.0 - mu_f - nu_f
+        s = mu_f - nu_f                                          # fused score in [-1, 1]
+        if self.rule == "signed":
+            self.weights_, self.targets_ = np.abs(s), np.where(s < 0, -y, y)
+        elif self.rule == "balance":
+            r = mu_f + nu_f
+            self.weights_ = r
+            self.targets_ = y * np.divide(s, r, out=np.ones_like(r), where=r > 1e-12)
+        else:
+            raise ValueError(f"unknown rule {self.rule!r}")
         self._solve(Z, self.weights_, self.targets_)
         return self

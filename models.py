@@ -25,7 +25,7 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "legacy"))
 
 from rvfl_family import FuzzyRVFL          # noqa: E402
-from rw_ifrvfl import EvidenceRVFL, RWIFRVFL, SEARCH_SPACE as RW_SPACE   # noqa: E402
+from rw_ifrvfl import EvidenceRVFL, RWIFRVFL, SignedScoreRVFL, SEARCH_SPACE as RW_SPACE  # noqa: E402
 from gbtsvm import GBTSVMClassifier        # noqa: E402
 from trkm import TRKMClassifier            # noqa: E402
 
@@ -114,6 +114,16 @@ def _v2(**fixed):
 def _drop(space, *names):
     return {p: v for p, v in space.items() if p not in names}
 
+
+# v3: same (n_hidden, lam) grid as every RVFL baseline; neighbourhoods up to 50 so that the
+# correction can average out heavy label noise; alpha = 1/2 is the published weight
+V3_SPACE = {"n_hidden": HIDDEN, "lam": LAMBDA, "k": [3, 9, 25, 50],
+            "sigma_scale": [0.5, 1.0, 1.5, 2.0], "alpha": [0.0, 0.5, 0.75, 1.0]}
+
+
+def _v3(**fixed):
+    return lambda **p: SignedScoreRVFL(random_state=SEED, **fixed, **p)
+
 REGISTRY = {
     "SVM": (lambda **p: SVC(kernel="rbf", **p),
             {"C": [0.01, 0.1, 1, 10, 100, 1000],
@@ -166,7 +176,14 @@ REGISTRY = {
     "v2:nocorr": (_v2(target="label"), V2_SPACE),                      # weights only
     "v2:pignistic": (_v2(weight="none", target="pignistic"), V2_SPACE),
     "v2:knnonly": (_v2(centroid=False), _drop(V2_SPACE, "sigma_scale")),
+    # v3 (signed fused score) and its pre-registered ablations
+    "RW-IFRVFL3": (_v3(), V3_SPACE),
+    "v3:sym": (_v3(symmetric=True), V3_SPACE),                         # discounted nu = g f
+    "v3:smallk": (_v3(), {**V3_SPACE, "k": [3, 5, 9, 15]}),            # v2's neighbourhoods
+    "v3:half": (_v3(alpha=0.5), _drop(V3_SPACE, "alpha")),            # published weight only
+    "v3:balance": (_v3(rule="balance"), V3_SPACE),                     # v2's weight and target
 }
+V3_MODELS = ["RW-IFRVFL3", "v3:sym", "v3:smallk", "v3:half", "v3:balance"]
 V2_MODELS = ["RW-IFRVFL2", "v2:asym", "v2:alpha1", "v2:noweight", "v2:nocorr", "v2:pignistic",
              "v2:knnonly"]
 

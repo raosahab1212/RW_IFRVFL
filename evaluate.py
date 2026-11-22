@@ -167,8 +167,9 @@ def run_outer(name, X, y, dataset, label_noise=0.0, feat_noise=0.0, tune_params=
         if cap and len(tr) > cap:
             keep = np.searchsorted(tr, _stratified_subset(tr, ytr_lookup(tr, ytr), cap))
         # caches speed up tuning only; the timed final fit must pay its own neighbour/ball cost
-        import gbtsvm, rvfl_family
+        import gbtsvm, rvfl_family, rw_ifrvfl
         rvfl_family._NN_CACHE.clear()
+        rw_ifrvfl._NN_BIG.clear()
         rvfl_family._D2_CACHE.clear()
         gbtsvm._BALL_CACHE.clear()
         r = fit_score(name, dict(params), X.iloc[tr[keep]], ytr[keep], X.iloc[te], y[te],

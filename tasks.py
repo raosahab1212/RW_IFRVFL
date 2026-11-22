@@ -9,7 +9,7 @@ Every shard job gets the same assignment because the packing is deterministic.
 """
 
 from datasets import BENCHMARK, CASE_STUDIES, LARGE
-from models import ABLATION_MODELS, BENCHMARK_MODELS, V2_MODELS
+from models import ABLATION_MODELS, BENCHMARK_MODELS, V2_MODELS, V3_MODELS
 
 FOLDS = range(10)
 NOISE_DATASETS = ["australian", "wisconsin", "heart", "ionosphere", "magic"]
@@ -30,6 +30,11 @@ EXPERIMENTS = {
     "v2_label": dict(datasets=NOISE_DATASETS, models=V2_MODELS, label=NOISE_LEVELS, feat=[0.0]),
     "v2_feature": dict(datasets=NOISE_DATASETS, models=V2_MODELS, label=[0.0], feat=NOISE_LEVELS),
     "v2_e7": dict(datasets=CASE_STUDIES, models=V2_MODELS, label=[0.0], feat=[0.0]),
+    # v3 (signed fused score) and its ablations, same settings
+    "v3_e1": dict(datasets=BENCHMARK, models=V3_MODELS, label=[0.0], feat=[0.0]),
+    "v3_label": dict(datasets=NOISE_DATASETS, models=V3_MODELS, label=NOISE_LEVELS, feat=[0.0]),
+    "v3_feature": dict(datasets=NOISE_DATASETS, models=V3_MODELS, label=[0.0], feat=NOISE_LEVELS),
+    "v3_e7": dict(datasets=CASE_STUDIES, models=V3_MODELS, label=[0.0], feat=[0.0]),
 }
 
 # Rough seconds per outer fold with the full protocol (30 configs).

@@ -16,6 +16,7 @@ by these scripts; tables are generated from the result CSVs.
 | `models.py` | Model registry, search spaces, equal tuning budget (30 configs). |
 | `evaluate.py` | Protocol: saved outer 10-fold splits, nested tuning inside the training folds, train-only noise, metrics and timings. |
 | `smoke_test.py` | Quick check: all models, 2 folds, small budget. |
+| `paper_tables.py`, `paper_figures.py` | LaTeX tables and figures of the manuscript's Sections 5-6, generated from `results/*_all.csv` (`python paper_tables.py <out_dir>`). |
 | `legacy/` | Earlier implementations; ANFIS and NF-RVFL are used from here. |
 | `splits/` | Outer split indices, created once per dataset and reused everywhere. |
 

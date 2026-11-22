@@ -22,6 +22,9 @@ EXPERIMENTS = {
     "e3": dict(datasets=BENCHMARK, models=_ABLATION_ONLY, label=[0.0], feat=[0.0]),
     "e4_label": dict(datasets=NOISE_DATASETS, models=BENCHMARK_MODELS, label=NOISE_LEVELS, feat=[0.0]),
     "e4_feature": dict(datasets=NOISE_DATASETS, models=BENCHMARK_MODELS, label=[0.0], feat=NOISE_LEVELS),
+    # ablation variants under the same noise (RVFL, RW-IFRVFL and IFRVFLC come from e4_*)
+    "e4_label_abl": dict(datasets=NOISE_DATASETS, models=_ABLATION_ONLY, label=NOISE_LEVELS, feat=[0.0]),
+    "e4_feature_abl": dict(datasets=NOISE_DATASETS, models=_ABLATION_ONLY, label=[0.0], feat=NOISE_LEVELS),
 }
 
 # Rough seconds per outer fold with the full protocol (30 configs).

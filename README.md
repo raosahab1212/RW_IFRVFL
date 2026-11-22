@@ -36,7 +36,8 @@ by these scripts; tables are generated from the result CSVs.
 ## Running on GitHub Actions
 
 Actions tab -> `experiments` -> Run workflow, choosing the experiment
-(`e1` benchmark, `e3` ablation, `e4_label` / `e4_feature` noise, `e7` case study)
+(`e1` benchmark, `e3` ablation, `e4_label` / `e4_feature` noise, `e4_label_abl` /
+`e4_feature_abl` ablation under noise, `e7` case study)
 and the number of shards. Each shard job uploads its per-task CSVs; the `merge`
 job combines them into `results-<experiment>` (`<exp>_all.csv`, `<exp>_summary.csv`).
 Re-running a failed job only recomputes tasks whose result files are missing

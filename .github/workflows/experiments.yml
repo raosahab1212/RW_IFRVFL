@@ -6,7 +6,7 @@ on:
       experiment:
         description: Experiment to run
         type: choice
-        options: [e1, e7, e3, e4_label, e4_feature]
+        options: [e1, e7, e3, e4_label, e4_feature, e4_label_abl, e4_feature_abl]
         default: e1
       shards:
         description: Number of parallel jobs (max 256; 20 run at once on the free plan)

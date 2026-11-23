@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+australian,NF-RVFL,3,0.0,0.3,621,"{'reg': 1.0, 'n_rules': 35, 'n_hidden': 200}",0.868572627090054,4.3456405769999975,0.782608695652174,0.777944647071444,0.7457627118644068,0.8370118845500849,0.013224109999995903,0.0010332970000064279,feature_noise,4.381439024000002,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

@@ -114,7 +114,7 @@ REGISTRY = {
     "NB": (lambda **p: GaussianNB(**p), {"var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6, 1e-5, 1e-4, 1e-3]}),
     "KNN": (lambda **p: KNeighborsClassifier(n_jobs=1, **p),
             {"n_neighbors": [3, 5, 7, 9, 11, 15, 21], "weights": ["uniform", "distance"]}),
-    "NF-RVFL": (_nfrvfl, {"n_hidden": HIDDEN, "reg": LAMBDA}),
+    "NF-RVFL": (_nfrvfl, {"n_hidden": HIDDEN, "reg": LAMBDA, "n_rules": list(range(5, 55, 5))}),
     "ANFIS": (lambda **p: ANFISClassifier(**p), {"L": [2, 3], "eta": [0.01, 0.1], "num_cluster": [2, 3, 4]}),
     "GBTSVM": (lambda **p: GBTSVMClassifier(random_state=0, **p),
                {"d1": [1e-5, 1e-3, 1e-1, 1, 10], "purity": [0.85, 0.9, 0.925, 0.95],

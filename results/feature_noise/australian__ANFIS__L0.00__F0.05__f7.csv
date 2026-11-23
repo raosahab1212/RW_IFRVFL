@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+australian,ANFIS,7,0.0,0.05,621,"{'L': 3, 'eta': 0.01, 'num_cluster': 2}",0.8481402637049162,176.01350504999982,0.8115942028985508,0.8114357788522177,0.8169014084507042,0.9473684210526316,3.0417320189999373,0.6497997999999825,feature_noise,179.7495855430002,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

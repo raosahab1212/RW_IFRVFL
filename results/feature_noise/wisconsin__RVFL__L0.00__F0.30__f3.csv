@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,RVFL,3,0.0,0.3,512,"{'lam': 0.1, 'n_hidden': 50}",0.970323786840301,1.8780155100000684,0.912280701754386,0.8999648999648999,0.8648648648648649,0.9854497354497356,0.0010006580000663,0.0002966170000036,feature_noise,1.8933932920000416,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

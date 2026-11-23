@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,TRKM,8,0.0,0.0,258,"{'mew': 2.0, 'lambd1': 0.001, 'eta1': 0.1}",0.623161509464299,2.1112907350000114,0.75,0.6493738819320215,0.4615384615384615,0.6687500000000001,0.0013742529999944,0.0004096179999919,benchmark,2.1269053020000115,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,IFRVFLC,6,0.0,0.0,865,"{'radius': 0.9, 'n_hidden': 300, 'lam': 0.0001, 'gamma': 0.25}",0.8181483405315408,3.3182791609999924,0.8333333333333334,0.8326797385620914,0.8222222222222222,0.8841783216783218,0.0145006569999992,0.0008201429999985,benchmark,3.348933950999992,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

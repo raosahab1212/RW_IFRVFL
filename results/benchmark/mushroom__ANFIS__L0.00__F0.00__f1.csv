@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,ANFIS,1,0.0,0.0,7311,"{'L': 3, 'eta': 0.01, 'num_cluster': 2}",0.8916402904630315,2974.851945056,0.8917589175891759,0.8896266584387535,0.8742857142857143,0.9377938823985652,109.36038570500024,24.18274373799977,benchmark,3108.537679328,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

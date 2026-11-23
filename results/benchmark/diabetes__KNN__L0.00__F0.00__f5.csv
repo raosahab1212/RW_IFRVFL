@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,KNN,5,0.0,0.0,63623,"{'n_neighbors': 21, 'weights': 'uniform'}",0.7152815238689024,3.5907235950000427,0.7320695996604895,0.7315893953172087,0.7202363367799114,0.7944166148363562,0.0045056420000264,4.423988432999977,benchmark,8.212360031999992,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

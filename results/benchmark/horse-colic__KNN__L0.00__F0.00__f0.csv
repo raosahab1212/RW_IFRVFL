@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,KNN,0,0.0,0.0,331,"{'n_neighbors': 15, 'weights': 'distance'}",0.8247243788415723,2.037110088999981,0.8108108108108109,0.805701425356339,0.7741935483870968,0.8664596273291926,0.0004979789999879,0.0013413380000031,benchmark,2.0679255199999886,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

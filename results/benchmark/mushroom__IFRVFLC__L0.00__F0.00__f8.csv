@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,IFRVFLC,8,0.0,0.0,7312,"{'radius': 0.8, 'n_hidden': 150, 'lam': 0.0001, 'gamma': 0.125}",1.0,44.459026086999984,1.0,1.0,1.0,1.0,1.8006313930000033,0.0117145940000114,benchmark,46.425353809,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

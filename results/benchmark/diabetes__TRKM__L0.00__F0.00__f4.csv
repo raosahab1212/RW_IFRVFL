@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,TRKM,4,0.0,0.0,8000,"{'mew': 32.0, 'lambd1': 0.001, 'eta1': 1}",0.7449753953482788,40.05032392199999,0.7416890649313905,0.7416879018468003,0.74113977884888,0.8180092918338644,2.3712916229999905,1.0050972600000136,benchmark,43.51739553700003,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

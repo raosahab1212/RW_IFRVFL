@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+pima,sens:n_hidden=50,8,0.0,0.0,692,"{'alpha': 0.75, 'k': 9, 'lam': 0.1, 'n_hidden': 50, 'sigma_scale': 1.5}",,0.0,0.75,0.7247951210215361,0.6415094339622641,0.8184615384615385,0.0122478700000101,0.0002611229999729,sensitivity,0.0207974699999908,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,NB,2,0.0,0.0,7311,{'var_smoothing': 0.001},0.9929943900381876,1.124769893000007,0.988929889298893,0.9889231859200174,0.9886506935687264,0.9999636434146104,0.0046509869999908,0.0013708950000363,benchmark,1.2119505840000784,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

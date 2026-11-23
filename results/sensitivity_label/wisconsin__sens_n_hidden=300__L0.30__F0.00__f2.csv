@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,sens:n_hidden=300,2,0.3,0.0,512,"{'alpha': 0.75, 'k': 9, 'lam': 0.1, 'n_hidden': 300, 'sigma_scale': 1.5}",,0.0,0.9649122807017544,0.9614864864864864,0.95,1.0,0.0181593540000051,0.0007733209999969,sensitivity_label,0.0344016499999924,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

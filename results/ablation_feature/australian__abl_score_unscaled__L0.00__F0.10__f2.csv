@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+australian,abl:score_unscaled,2,0.0,0.1,621,"{'sigma_scale': 1.0, 'n_hidden': 150, 'lam': 0.0001, 'k': 3}",0.8730726421140833,2.969715139000016,0.8695652173913043,0.8694555392053815,0.8656716417910447,0.9700854700854702,0.0087178389999849,0.0003879560000257,ablation_feature,2.9991279750000075,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

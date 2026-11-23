@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+phoneme,RVFL,6,0.0,0.0,4864,"{'lam': 0.0001, 'n_hidden': 200}",0.7822084482735929,3.317159027999992,0.8388888888888889,0.8012480169222633,0.7147540983606557,0.9027602889522168,0.0187659740000185,0.0015510779999772,benchmark,3.3511684839999702,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,ANFIS,2,0.0,0.0,865,"{'L': 3, 'eta': 0.01, 'num_cluster': 2}",0.8225050309739507,57.47832452200001,0.8229166666666666,0.8228974498100923,0.8247422680412371,0.9135076252723312,0.9280303949999792,0.2238850530000036,benchmark,58.652492317,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,RW-IFRVFL,4,0.0,0.0,331,"{'sigma_scale': 2.0, 'n_hidden': 50, 'lam': 0.0001, 'k': 50, 'alpha': 0.75}",0.8353126568018754,6.732697716000075,0.8378378378378378,0.8221153846153846,0.7692307692307693,0.9099378881987576,0.0100282600000127,0.0007066139999096,benchmark,6.783430500999998,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

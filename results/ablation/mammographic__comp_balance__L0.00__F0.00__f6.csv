@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,comp:balance,6,0.0,0.0,865,"{'sigma_scale': 1.5, 'n_hidden': 300, 'lam': 0.01, 'k': 9, 'alpha': 0.75}",0.8280204608081142,2.5667471130000195,0.8333333333333334,0.8321678321678322,0.8181818181818182,0.9217657342657344,0.0240340299999957,0.0007618719999982,ablation,2.606149788000039,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

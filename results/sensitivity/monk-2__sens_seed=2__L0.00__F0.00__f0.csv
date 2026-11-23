@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+monk-2,sens:seed=2,0,0.0,0.0,388,"{'alpha': 0.75, 'k': 9, 'lam': 0.1, 'n_hidden': 100, 'sigma_scale': 1.5}",,0.0,0.9318181818181818,0.9317829457364342,0.9302325581395348,0.9855072463768116,0.0039254529999652,0.0002046580000296,sensitivity,0.0098120789999711,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

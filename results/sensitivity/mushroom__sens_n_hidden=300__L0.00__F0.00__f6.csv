@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,sens:n_hidden=300,6,0.0,0.0,7312,"{'alpha': 0.75, 'k': 9, 'lam': 0.1, 'n_hidden': 300, 'sigma_scale': 1.5}",,0.0,0.9975369458128078,0.997533114594726,0.9974358974358974,1.0,0.8526171319999918,0.0076226569999988,sensitivity,0.9813086479999952,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

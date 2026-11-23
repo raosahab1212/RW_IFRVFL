@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,CatBoost,7,0.0,0.0,865,"{'learning_rate': 0.03, 'l2_leaf_reg': 10, 'iterations': 200, 'depth': 4}",0.827552712470483,19.836010714,0.8333333333333334,0.8326797385620914,0.8222222222222222,0.9088723776223776,0.0532433899999773,0.0005311770000275,benchmark,19.903080625,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

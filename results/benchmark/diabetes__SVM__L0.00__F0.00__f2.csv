@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,SVM,2,0.0,0.0,20000,"{'gamma': 0.01, 'C': 100}",0.7489001286904481,115.437662894,0.7511670674777197,0.7497173635715011,0.7306691165212066,0.8231087940227445,16.12524287100001,9.164859540000007,benchmark,140.83148856900002,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

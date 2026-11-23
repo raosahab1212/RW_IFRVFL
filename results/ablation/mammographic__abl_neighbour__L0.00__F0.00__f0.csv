@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,abl:neighbour,0,0.0,0.0,864,"{'n_hidden': 50, 'lam': 0.1, 'k': 5}",0.8338956982165453,2.237045369999976,0.7835051546391752,0.7826736370425691,0.7692307692307693,0.9155982905982908,0.0113528649999921,0.0004194660000393,ablation,2.26180548800005,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

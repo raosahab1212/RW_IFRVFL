@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,GBTSVM,7,0.0,0.0,20000,"{'purity': 0.85, 'min_ball_size': 2, 'd1': 1}",0.7350626198322371,406.420541399,0.7439524685245438,0.7433761392432381,0.7312147312147312,0.8200633330371603,52.87178612600002,0.001601628000003,benchmark,459.4480128430001,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

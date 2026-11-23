@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,sens:lam=0.01,1,0.0,0.0,331,"{'alpha': 0.75, 'k': 9, 'lam': 0.01, 'n_hidden': 100, 'sigma_scale': 1.5}",,0.0,0.8648648648648649,0.8542159180457052,0.8148148148148148,0.8167701863354037,0.0106392459999824,0.00074526100002,sensitivity,0.0502171900000121,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

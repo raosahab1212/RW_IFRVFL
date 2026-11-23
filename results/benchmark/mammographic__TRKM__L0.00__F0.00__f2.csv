@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,TRKM,2,0.0,0.0,865,"{'mew': 0.125, 'lambd1': 0.001, 'eta1': 0.01}",0.7028805691349198,3.354481713999917,0.6666666666666666,0.6515426497277677,0.5789473684210527,0.7806100217864924,0.0121075430000701,0.0019121729999369,benchmark,3.381609877000073,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

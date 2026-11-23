@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,NB,9,0.0,0.0,258,{'var_smoothing': 0.001},0.6097574706698563,0.3137606829999981,0.5714285714285714,0.5333333333333333,0.4,0.55625,0.0003797890000214,0.0002329899999722,benchmark,0.3233910069999979,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

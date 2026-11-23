@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,IFRVFLC,2,0.0,0.0,331,"{'radius': 1.0, 'n_hidden': 300, 'lam': 0.01, 'gamma': 1.0}",0.8519363519004699,2.5402112529999954,0.8108108108108109,0.7885714285714285,0.72,0.7795031055900622,0.0046609530000125,0.0003838750000113,benchmark,2.560731226999991,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

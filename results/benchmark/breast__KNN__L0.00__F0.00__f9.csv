@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,KNN,9,0.0,0.0,258,"{'n_neighbors': 5, 'weights': 'distance'}",0.6296076360569114,0.9367317360000128,0.7142857142857143,0.6190476190476191,0.4285714285714285,0.6437499999999999,0.0003384330000244,0.0007554769999842,benchmark,0.95170626700002,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

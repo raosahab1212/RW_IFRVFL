@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,TRKM,1,0.0,0.0,331,"{'mew': 2.0, 'lambd1': 0.001, 'eta1': 0.1}",0.7975312395184024,2.123492873000032,0.918918918918919,0.9093877551020408,0.88,0.8850931677018633,0.0012186180000526,0.0003277490000073,benchmark,2.137423443999978,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

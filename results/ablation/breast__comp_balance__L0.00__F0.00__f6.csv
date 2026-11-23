@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,comp:balance,6,0.0,0.0,258,"{'sigma_scale': 1.5, 'n_hidden': 300, 'lam': 0.01, 'k': 9, 'alpha': 0.75}",0.6109730318401976,4.448174849999987,0.7857142857142857,0.6347826086956522,0.4,0.55625,0.0125034820000564,0.001024407999921,ablation,4.488604110000097,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

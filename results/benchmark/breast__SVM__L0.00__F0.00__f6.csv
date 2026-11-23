@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,SVM,6,0.0,0.0,258,"{'gamma': 0.001, 'C': 1000}",0.6238327252730984,3.151246135000008,0.5714285714285714,0.475,0.25,0.4875,0.0056601130000331,0.0009624329999837,benchmark,3.177228699000011,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

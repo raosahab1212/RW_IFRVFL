@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,LightGBM,9,0.0,0.0,332,"{'num_leaves': 31, 'n_estimators': 100, 'min_child_samples': 20, 'learning_rate': 0.01}",0.84313901744757,11.850088681999978,0.8333333333333334,0.8125,0.75,0.8812709030100335,0.0229482089999919,0.002199097000016,benchmark,11.907890977999957,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

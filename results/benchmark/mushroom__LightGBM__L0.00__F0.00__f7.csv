@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,LightGBM,7,0.0,0.0,7312,"{'num_leaves': 63, 'n_estimators': 300, 'min_child_samples': 50, 'learning_rate': 0.1}",1.0,16.159378775999983,1.0,1.0,1.0,1.0,0.1915214030000243,0.0114138110000112,benchmark,16.457037891000027,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

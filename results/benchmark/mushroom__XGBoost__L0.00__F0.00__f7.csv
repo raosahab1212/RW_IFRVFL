@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,XGBoost,7,0.0,0.0,7312,"{'subsample': 0.85, 'n_estimators': 500, 'max_depth': 3, 'learning_rate': 0.2, 'colsample_bytree': 0.85}",1.0,37.309507,1.0,1.0,1.0,1.0,0.981248411000024,0.0095049329999596,benchmark,38.462305122999965,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

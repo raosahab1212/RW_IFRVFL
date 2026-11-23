@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+monk-2,IFRVFLC,7,0.0,0.0,389,"{'radius': 0.3, 'n_hidden': 200, 'lam': 0.001, 'gamma': 2.0}",0.9716787399726552,1.3677373749999902,0.9767441860465116,0.9766937669376694,0.975609756097561,0.9869565217391304,0.0027388089999931,0.0003143429999852,benchmark,1.378784321000012,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

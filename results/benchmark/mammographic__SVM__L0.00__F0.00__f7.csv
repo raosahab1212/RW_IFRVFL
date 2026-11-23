@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,SVM,7,0.0,0.0,865,"{'gamma': 1, 'C': 10}",0.8406400293475057,7.711917396999979,0.84375,0.8433249918398433,0.8351648351648352,0.8865821678321679,0.0137845879999645,0.0018548020000253,benchmark,7.737626632000001,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

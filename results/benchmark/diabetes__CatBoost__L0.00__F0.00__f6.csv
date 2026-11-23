@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,CatBoost,6,0.0,0.0,63623,"{'learning_rate': 0.03, 'l2_leaf_reg': 10, 'iterations': 200, 'depth': 4}",0.7448220223597085,53.115045028,0.7491865893337105,0.7488362823518897,0.7394562821454813,0.827328461684393,1.9646269990000176,0.0084016249999763,benchmark,55.213323664,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+phoneme,abl:shuffled,8,0.0,0.0,4864,"{'sigma_scale': 1.5, 'n_hidden': 150, 'lam': 0.0001, 'k': 5}",0.7777914716095671,8.538427059000014,0.8074074074074075,0.7590071920218335,0.6510067114093959,0.8841347661730964,0.1407202309999888,0.0044401299999776,ablation,8.705337930999974,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

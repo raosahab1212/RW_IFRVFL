@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+halophilic,SVM,0,0.0,0.0,250,"{'gamma': 0.001, 'C': 10}",0.8835081144041684,6.422996933999997,0.8571428571428571,0.8541666666666667,0.8333333333333334,0.7857142857142856,0.0059517389999967,0.0032093660000072,case_study,6.467048335000001,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+monk-2,KNN,4,0.0,0.0,389,"{'n_neighbors': 3, 'weights': 'uniform'}",0.94579284190734,1.4287750800000367,0.9767441860465116,0.9765411893071468,0.9743589743589745,0.9934782608695653,0.000860626000076,0.0025386669999534,benchmark,1.4507295519999843,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

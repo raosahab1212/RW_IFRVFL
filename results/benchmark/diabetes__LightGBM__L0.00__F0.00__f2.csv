@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,LightGBM,2,0.0,0.0,63623,"{'num_leaves': 15, 'n_estimators': 100, 'min_child_samples': 20, 'learning_rate': 0.05}",0.7507187543882949,19.42900238300001,0.7572499646343188,0.7565050138624927,0.74303683737646,0.8276135884265118,0.4961634799999501,0.051372227999991,benchmark,20.125940930999946,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

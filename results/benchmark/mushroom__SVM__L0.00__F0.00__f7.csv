@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,SVM,7,0.0,0.0,7312,"{'gamma': 0.01, 'C': 100}",1.0,123.65270965499997,1.0,1.0,1.0,1.0,0.3211598940000044,0.0615938290000031,benchmark,124.197483326,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

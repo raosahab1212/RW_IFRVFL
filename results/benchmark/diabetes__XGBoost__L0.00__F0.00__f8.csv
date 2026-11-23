@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,XGBoost,8,0.0,0.0,63623,"{'subsample': 0.7, 'n_estimators': 100, 'max_depth': 5, 'learning_rate': 0.05, 'colsample_bytree': 0.85}",0.7450780073539471,18.543967746999957,0.7453670957702645,0.7447939506286345,0.7326997326997327,0.8290174894278173,0.6609835219999809,0.0240373400000066,benchmark,19.42526826,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

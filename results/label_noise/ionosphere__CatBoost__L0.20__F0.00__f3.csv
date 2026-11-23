@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,CatBoost,3,0.2,0.0,316,"{'learning_rate': 0.03, 'l2_leaf_reg': 10, 'iterations': 500, 'depth': 6}",0.7409306491911839,489.8439322700001,0.8285714285714286,0.8164335664335665,0.7692307692307693,0.9311594202898552,3.707567484000037,0.0010446799999499,label_noise,493.573657122,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,SVM,1,0.0,0.4,512,"{'gamma': 1, 'C': 10}",0.966354189462742,1.8885862529998576,0.9473684210526316,0.9439895185063872,0.9302325581395348,0.996103896103896,0.002027144999829,0.0006611750000047,feature_noise,1.9005981180000615,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

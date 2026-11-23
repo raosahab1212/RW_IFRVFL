@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+phoneme,GBTSVM,8,0.0,0.0,4864,"{'purity': 0.85, 'min_ball_size': 4, 'd1': 10}",0.6534263849865896,189.132062642,0.5407407407407407,0.5299007287381177,0.4585152838427948,0.5377441027418742,3.0667014449999783,0.0004804530000228,benchmark,192.21593702900003,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

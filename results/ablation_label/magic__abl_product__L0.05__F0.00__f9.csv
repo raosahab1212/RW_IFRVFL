@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+magic,abl:product,9,0.05,0.0,17118,"{'sigma_scale': 1.5, 'n_hidden': 150, 'lam': 0.0001, 'k': 5}",0.7672002922322655,3.2793081889999485,0.8401682439537329,0.8080522653635736,0.7295373665480427,0.909118571617344,1.110812802999931,0.0043486790000315,ablation_label,4.437986054000021,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

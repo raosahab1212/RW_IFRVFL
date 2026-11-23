@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+magic,GBTSVM,8,0.0,0.2,17118,"{'purity': 0.95, 'min_ball_size': 1, 'd1': 1e-05}",0.7304207248306178,247.395841559,0.7287066246056783,0.704921581573564,0.6211453744493393,0.7915846847469381,201.809589027,0.0010094470000012,feature_noise,449.259106769,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

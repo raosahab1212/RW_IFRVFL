@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,RF,1,0.0,0.0,865,"{'n_estimators': 200, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 5}",0.8347414989602481,73.840915548,0.84375,0.8408312147673263,0.8192771084337349,0.9043572984749456,0.3188983219999954,0.0186710930000231,benchmark,74.196491154,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

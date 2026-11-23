@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,GBTSVM,6,0.0,0.0,7312,"{'purity': 0.925, 'min_ball_size': 4, 'd1': 1}",0.9845681762523832,10.115143407000003,0.9802955665024632,0.9802649167578076,0.9794871794871794,0.9959966223399408,0.2117481309999931,0.0007103050000125,benchmark,10.413386347,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

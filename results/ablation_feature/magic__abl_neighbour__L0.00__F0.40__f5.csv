@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+magic,abl:neighbour,5,0.0,0.4,17118,"{'n_hidden': 300, 'lam': 0.0001, 'k': 3}",0.746310468255612,3.382226580000008,0.825446898002103,0.7855958364853504,0.6931608133086876,0.8962863554202626,1.994017154000005,0.0108320709999816,ablation_feature,5.4234801240000365,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

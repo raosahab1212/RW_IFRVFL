@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,abl:product_unscaled,0,0.0,0.3,315,"{'sigma_scale': 2.0, 'n_hidden': 200, 'lam': 0.01, 'k': 3}",0.8739135810376262,3.3848522309999964,0.9444444444444444,0.9375,0.9166666666666666,0.9966555183946488,0.0091298780000101,0.0007522420000043,ablation_feature,3.415207455000001,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

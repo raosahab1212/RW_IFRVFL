@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+pima,ANFIS,1,0.0,0.0,691,"{'L': 3, 'eta': 0.01, 'num_cluster': 2}",0.7309663304605553,32.129122962999986,0.7402597402597403,0.6818181818181819,0.5454545454545454,0.8081481481481481,0.5053196090000256,0.108581657000002,benchmark,32.75507402799997,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

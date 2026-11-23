@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,IFRVFLC,5,0.0,0.0,63623,"{'radius': 0.4, 'n_hidden': 200, 'lam': 1.0, 'gamma': 0.03125}",0.7372243255845334,32.72374075900001,0.742537841278823,0.7423689374824782,0.7357723577235772,0.8198393220355263,99.097584371,0.087848278999985,benchmark,132.130681884,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

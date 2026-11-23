@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,GBTSVM,8,0.0,0.0,865,"{'purity': 0.925, 'min_ball_size': 4, 'd1': 10}",0.8359787107628398,35.90977451700002,0.8125,0.8084257206208425,0.7804878048780488,0.8465909090909092,1.0265729900000051,0.000267521000012,benchmark,36.94991740199998,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,IFRVFLC,3,0.0,0.0,257,"{'radius': 0.6, 'n_hidden': 150, 'lam': 0.0001, 'gamma': 8.0}",0.6141456928402208,1.7247449479999943,0.7586206896551724,0.652991452991453,0.4615384615384615,0.611111111111111,0.0018597179999915,0.000316851000008,benchmark,1.7374989740000046,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

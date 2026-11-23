@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,abl:shuffled,3,0.0,0.0,331,"{'sigma_scale': 0.5, 'n_hidden': 300, 'lam': 0.1, 'k': 3}",0.7932538430740299,2.867297949000033,0.8108108108108109,0.7959022852639874,0.7407407407407407,0.8167701863354037,0.0067589230000066,0.0004119060000107,ablation,2.8904688869999973,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

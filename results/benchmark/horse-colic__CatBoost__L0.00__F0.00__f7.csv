@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,CatBoost,7,0.0,0.0,331,"{'learning_rate': 0.1, 'l2_leaf_reg': 3, 'iterations': 200, 'depth': 4}",0.8360514494376865,141.24050054699995,0.8918918918918919,0.8766666666666667,0.8333333333333334,0.9519230769230768,0.1474251930000036,0.001305646999981,benchmark,141.41925087600004,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

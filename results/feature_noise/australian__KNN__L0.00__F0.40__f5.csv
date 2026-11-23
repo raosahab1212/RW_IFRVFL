@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+australian,KNN,5,0.0,0.4,621,"{'n_neighbors': 11, 'weights': 'uniform'}",0.8602761794969528,0.7675640059999296,0.9130434782608696,0.9121392190152802,0.9032258064516128,0.9660441426146013,0.000212810999983,0.0007777329999498,feature_noise,0.7793420289999631,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

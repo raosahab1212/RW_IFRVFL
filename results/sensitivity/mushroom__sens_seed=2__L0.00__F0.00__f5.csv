@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,sens:seed=2,5,0.0,0.0,7312,"{'alpha': 0.75, 'k': 9, 'lam': 0.1, 'n_hidden': 100, 'sigma_scale': 1.5}",,0.0,1.0,1.0,1.0,1.0,0.6459171980000065,0.0035851060000027,sensitivity,0.7485793510000462,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

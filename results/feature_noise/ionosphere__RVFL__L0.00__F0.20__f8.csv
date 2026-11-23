@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,RVFL,8,0.0,0.2,316,"{'lam': 0.01, 'n_hidden': 150}",0.8908490547641381,3.283668249000129,0.8571428571428571,0.8299319727891157,0.7619047619047619,0.916083916083916,0.0041339560000324,0.0009428819998902,feature_noise,3.3113009520000105,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

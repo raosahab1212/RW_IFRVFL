@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,XGBoost,5,0.0,0.0,331,"{'subsample': 0.7, 'n_estimators': 100, 'max_depth': 5, 'learning_rate': 0.1, 'colsample_bytree': 0.7}",0.8562381815364489,14.583780656000002,0.7837837837837838,0.7533333333333333,0.6666666666666666,0.8540372670807453,0.0333195210000099,0.0012088449999936,benchmark,14.645983414,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

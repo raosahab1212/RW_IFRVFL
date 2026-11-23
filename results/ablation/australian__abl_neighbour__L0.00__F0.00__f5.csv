@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+australian,abl:neighbour,5,0.0,0.0,621,"{'n_hidden': 50, 'lam': 0.1, 'k': 5}",0.8605344028144968,4.019319464999995,0.8985507246376812,0.8977777777777778,0.8888888888888888,0.962648556876061,0.0099649009999893,0.0004385160000026,ablation,4.053957733999994,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

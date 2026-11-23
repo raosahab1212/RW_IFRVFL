@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,LightGBM,3,0.0,0.0,865,"{'num_leaves': 15, 'n_estimators': 100, 'min_child_samples': 50, 'learning_rate': 0.01}",0.8344394966457676,7.988309207999976,0.875,0.8745098039215686,0.8666666666666667,0.9366013071895424,0.0118757399999935,0.0013878849999855,benchmark,8.011918173000026,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

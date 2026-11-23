@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,abl:neighbour,8,0.0,0.3,512,"{'n_hidden': 100, 'lam': 0.1, 'k': 3}",0.9638515637366364,1.7631354940000108,0.9473684210526316,0.9415384615384615,0.9230769230769232,0.9933862433862436,0.0063588040000013,0.0002955960000008,ablation_feature,1.7808715290000094,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,GBTSVM,8,0.0,0.2,316,"{'purity': 0.95, 'min_ball_size': 2, 'd1': 1}",0.8525701241920253,14.725411727000022,0.8285714285714286,0.8097826086956521,0.75,0.8846153846153846,0.4727365660000089,0.000502847000007,feature_noise,15.223287577999995,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

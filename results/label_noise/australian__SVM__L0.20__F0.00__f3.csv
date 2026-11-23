@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+australian,SVM,3,0.2,0.0,621,"{'gamma': 0.01, 'C': 1000}",0.7433825835334871,6.029962625999929,0.7391304347826086,0.7364176570458405,0.7096774193548387,0.800509337860781,0.1098130489999675,0.0025527970000212,label_noise,6.165575364999995,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

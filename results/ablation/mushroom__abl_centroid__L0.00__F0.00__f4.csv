@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,abl:centroid,4,0.0,0.0,7312,"{'sigma_scale': 1.5, 'n_hidden': 150, 'lam': 0.001}",1.0,9.942193113999965,1.0,1.0,1.0,1.0,0.0715308320000076,0.0053304040000057,ablation,10.127798181999992,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

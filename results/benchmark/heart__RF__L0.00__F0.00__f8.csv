@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+heart,RF,8,0.0,0.0,243,"{'n_estimators': 500, 'min_samples_leaf': 5, 'max_features': 'sqrt', 'max_depth': 10}",0.8489831999035152,64.83700460199998,0.8148148148148148,0.8106591865357644,0.782608695652174,0.8222222222222223,0.7627938209999456,0.0352062020000403,benchmark,65.65323100399996,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

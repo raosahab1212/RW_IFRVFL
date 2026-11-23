@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,RVFL,7,0.0,0.0,63623,"{'lam': 1.0, 'n_hidden': 300}",0.734816076303216,5.026375705999953,0.7472061111897015,0.7467127026808691,0.7355335207932514,0.8255400558246463,1.0696337269999958,0.122641749999957,benchmark,6.385543613999971,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

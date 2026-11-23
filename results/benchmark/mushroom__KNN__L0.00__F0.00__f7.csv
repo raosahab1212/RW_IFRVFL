@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,KNN,7,0.0,0.0,7312,"{'n_neighbors': 5, 'weights': 'distance'}",1.0,5.085866354999951,1.0,1.0,1.0,1.0,0.0009014180000121,0.0820016719999898,benchmark,5.256758585,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

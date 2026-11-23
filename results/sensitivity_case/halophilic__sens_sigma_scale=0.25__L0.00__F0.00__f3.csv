@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+halophilic,sens:sigma_scale=0.25,3,0.0,0.0,250,"{'alpha': 0.75, 'k': 9, 'lam': 0.1, 'n_hidden': 100, 'sigma_scale': 0.25}",,0.0,0.4642857142857143,0.46360153256704983,0.4827586206896552,0.5612244897959184,0.03414173500004836,0.0008081080000010843,sensitivity_case,0.0975510050000139,x86_64,2,Linux-6.18.44-fc-v726-x86_64-with-glibc2.39,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,ANFIS,7,0.0,0.0,331,"{'L': 3, 'eta': 0.01, 'num_cluster': 2}",0.692235390647396,272.115123396,0.8108108108108109,0.7885714285714285,0.72,0.7804487179487181,4.426095231999966,0.9028432459999748,benchmark,277.48873652500004,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

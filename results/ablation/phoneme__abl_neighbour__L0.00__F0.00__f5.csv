@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+phoneme,abl:neighbour,5,0.0,0.0,4864,"{'n_hidden': 300, 'lam': 0.0001, 'k': 3}",0.7850802956419649,5.297939384000017,0.8351851851851851,0.796679005817028,0.7081967213114754,0.9057094572204916,0.1260045299999888,0.0033191770000371,ablation,5.445441588999984,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

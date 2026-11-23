@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+phoneme,KNN,3,0.0,0.0,4863,"{'n_neighbors': 9, 'weights': 'distance'}",0.8657508576864039,1.5411846579997928,0.88909426987061,0.8604807097173509,0.7972972972972973,0.9365142085679476,0.0021997480000663,0.0063860449999992,benchmark,1.5603346910002074,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

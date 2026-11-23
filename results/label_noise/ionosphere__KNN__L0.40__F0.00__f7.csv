@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,KNN,7,0.4,0.0,316,"{'n_neighbors': 9, 'weights': 'uniform'}",0.5348974503210954,0.9898537610001767,0.8571428571428571,0.8528174936921783,0.8275862068965517,0.8618881118881119,0.0003859630000988,0.0014570679998087,label_noise,1.005480040000066,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

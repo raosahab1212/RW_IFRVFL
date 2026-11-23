@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,XGBoost,8,0.0,0.0,865,"{'subsample': 0.7, 'n_estimators': 100, 'max_depth': 5, 'learning_rate': 0.01, 'colsample_bytree': 0.7}",0.8358561613900871,11.553003075999982,0.84375,0.8408312147673263,0.8192771084337349,0.8730332167832169,0.0237236230000235,0.0016851909999786,benchmark,11.595825196999954,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

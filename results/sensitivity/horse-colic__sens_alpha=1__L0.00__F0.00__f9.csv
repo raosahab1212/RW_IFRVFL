@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,sens:alpha=1,9,0.0,0.0,332,"{'alpha': 1.0, 'k': 9, 'lam': 0.1, 'n_hidden': 100, 'sigma_scale': 1.5}",,0.0,0.75,0.7333333333333334,0.6666666666666666,0.782608695652174,0.0071212690000095,0.0004376290000038,sensitivity,0.0294308189999981,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

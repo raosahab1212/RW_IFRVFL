@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+pima,RVFL,7,0.0,0.0,691,"{'lam': 0.001, 'n_hidden': 50}",0.7406812720014656,2.227986569999985,0.7662337662337663,0.7275943396226415,0.625,0.8111111111111111,0.0013730840000789,0.0004767909999827,benchmark,2.243536178999989,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

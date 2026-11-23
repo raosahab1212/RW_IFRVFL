@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,IFRVFLC,7,0.0,0.2,316,"{'radius': 1.0, 'n_hidden': 200, 'lam': 0.01, 'gamma': 0.25}",0.8891541587703434,1.556335329999996,0.9714285714285714,0.9688888888888888,0.96,1.0,0.0025698709999915,0.0003368389999991,feature_noise,1.5686500109999884,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

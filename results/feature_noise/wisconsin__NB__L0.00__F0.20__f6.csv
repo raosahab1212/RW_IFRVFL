@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,NB,6,0.0,0.2,512,{'var_smoothing': 1e-09},0.9323096725885964,0.3939207270000224,0.8947368421052632,0.8869047619047619,0.8571428571428571,0.9814814814814816,0.0004926210000348,0.0003611519999822,feature_noise,0.4066131860000723,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

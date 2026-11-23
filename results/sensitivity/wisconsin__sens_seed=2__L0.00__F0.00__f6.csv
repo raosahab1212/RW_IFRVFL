@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,sens:seed=2,6,0.0,0.0,512,"{'alpha': 0.75, 'k': 9, 'lam': 0.1, 'n_hidden': 100, 'sigma_scale': 1.5}",,0.0,0.9473684210526316,0.9415384615384615,0.9230769230769232,1.0,0.0073734580000177,0.0003218209999999,sensitivity,0.0161488679999592,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

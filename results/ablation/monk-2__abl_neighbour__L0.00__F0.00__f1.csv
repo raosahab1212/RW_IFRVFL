@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+monk-2,abl:neighbour,1,0.0,0.0,388,"{'n_hidden': 150, 'lam': 0.0001, 'k': 5}",0.974107464918924,2.2054630369999586,0.9545454545454546,0.9545454545454546,0.9545454545454546,0.9958592132505176,0.0077252730000054,0.0004482649999317,ablation,2.22750995399997,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+horse-colic,SVM,1,0.0,0.0,331,"{'gamma': 'scale', 'C': 1}",0.8157638827536537,7.225313376999907,0.918918918918919,0.9125295508274232,0.8888888888888888,0.8540372670807453,0.0060949129999698,0.0017277220000551,benchmark,7.273729204000006,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

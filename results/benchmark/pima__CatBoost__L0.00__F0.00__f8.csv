@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+pima,CatBoost,8,0.0,0.0,692,"{'learning_rate': 0.03, 'l2_leaf_reg': 10, 'iterations': 200, 'depth': 4}",0.7530894868560654,110.81101622499996,0.75,0.7247951210215361,0.6415094339622641,0.8561538461538462,0.1640052219999574,0.0008391360000246,benchmark,110.997386293,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

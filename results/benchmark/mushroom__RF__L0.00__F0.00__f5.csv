@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,RF,5,0.0,0.0,7312,"{'n_estimators': 200, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': None}",1.0,54.933329761,1.0,1.0,1.0,1.0,0.4228696170000035,0.0195343259999987,benchmark,55.471760081,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

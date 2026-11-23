@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,LightGBM,5,0.0,0.0,257,"{'num_leaves': 63, 'n_estimators': 300, 'min_child_samples': 50, 'learning_rate': 0.1}",0.6394668354539552,4.458033869000019,0.6896551724137931,0.5953488372093023,0.4,0.4833333333333333,0.0103340829999751,0.0011950079999678,benchmark,4.480484235000063,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

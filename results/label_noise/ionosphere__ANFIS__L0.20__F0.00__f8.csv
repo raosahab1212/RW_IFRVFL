@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,ANFIS,8,0.2,0.0,316,"{'L': 3, 'eta': 0.01, 'num_cluster': 2}",0.5788030322580885,37.84100029000001,0.6857142857142857,0.6026831785345717,0.4210526315789473,0.791958041958042,0.6228023150001718,0.135681528999612,label_noise,38.61030268099967,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

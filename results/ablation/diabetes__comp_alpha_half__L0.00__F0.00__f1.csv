@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,comp:alpha_half,1,0.0,0.0,63622,"{'sigma_scale': 0.5, 'n_hidden': 200, 'lam': 0.1, 'k': 3}",0.7355992137298938,6.564159555999993,0.7414427157001414,0.7407705900877138,0.7275707898658719,0.8158085341773216,31.649876079999984,0.0721817850000263,ablation,38.46479772800001,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+adult,sens:k=3,3,0.0,0.0,43958,"{'alpha': 0.75, 'k': 3, 'lam': 0.1, 'n_hidden': 100, 'sigma_scale': 1.5}",,0.0,0.8327190827190827,0.7411368606470132,0.5871652349671551,0.8705913063833552,26.17754006599999,0.0321514480000075,sensitivity,26.56439496199998,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

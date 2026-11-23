@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,sens:alpha=0.5,2,0.0,0.0,257,"{'alpha': 0.5, 'k': 9, 'lam': 0.1, 'n_hidden': 100, 'sigma_scale': 1.5}",,0.0,0.6551724137931034,0.5292207792207793,0.2857142857142857,0.7388888888888889,0.0072382550000043,0.000648961999957,sensitivity,0.0299155780000432,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

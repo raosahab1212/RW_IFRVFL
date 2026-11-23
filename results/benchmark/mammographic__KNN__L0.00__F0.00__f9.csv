@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mammographic,KNN,9,0.0,0.0,865,"{'n_neighbors': 11, 'weights': 'uniform'}",0.8107017722628646,0.9552478890000202,0.8333333333333334,0.8297117516629712,0.8048780487804879,0.9123688811188811,0.0005966429999944,0.0018792949999806,benchmark,0.9680732960000568,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

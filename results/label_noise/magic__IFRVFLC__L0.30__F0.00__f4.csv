@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+magic,IFRVFLC,4,0.3,0.0,17118,"{'radius': 0.6, 'n_hidden': 100, 'lam': 0.1, 'gamma': 0.0625}",0.6052089974946325,32.247831546999976,0.8464773922187171,0.8212939795508603,0.7542087542087542,0.8970949608244623,8.050121856000004,0.0136016479999909,label_noise,40.36546426999999,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

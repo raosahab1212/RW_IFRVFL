@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+diabetes,ANFIS,4,0.0,0.0,20000,"{'L': 3, 'eta': 0.01, 'num_cluster': 2}",0.7497265798145926,388.4838580549999,0.7433866176262555,0.7432786031141385,0.7380127094165222,0.8179748717049731,39.15813621899997,27.39263349400005,benchmark,455.126822593,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

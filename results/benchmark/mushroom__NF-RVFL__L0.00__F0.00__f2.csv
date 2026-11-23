@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+mushroom,NF-RVFL,2,0.0,0.0,7311,"{'reg': 0.001, 'n_rules': 10, 'n_hidden': 50}",1.0,23.145049823999997,1.0,1.0,1.0,1.0,0.11047693899999445,0.009729006000000595,benchmark,23.421668081999997,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

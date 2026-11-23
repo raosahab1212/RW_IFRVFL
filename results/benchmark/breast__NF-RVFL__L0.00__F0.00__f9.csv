@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+breast,NF-RVFL,9,0.0,0.0,258,"{'reg': 1.0, 'n_rules': 10, 'n_hidden': 50}",0.6613965895903018,2.769101827,0.6785714285714286,0.5902439024390245,0.4,0.5375,0.0031877970000095956,0.0003221359999940887,benchmark,2.790195846000003,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

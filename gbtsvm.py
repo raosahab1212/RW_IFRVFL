@@ -1,9 +1,4 @@
-"""
-Granular-Ball Twin SVM (linear), scikit-learn wrapper.
-
-Follows the authors' public reference implementation: the QP linear terms use
-the granular-ball radii, and a freshly split ball is re-examined before moving on.
-"""
+"""Granular-Ball Twin SVM (linear), following the authors' reference implementation."""
 
 import hashlib
 from collections import Counter
@@ -56,10 +51,10 @@ def _granular_balls(X, y, purity, min_sample, min_ball_size, seed):
             lab = KMeans(n_clusters=2, n_init=10, random_state=seed).fit(X[idx]).labels_
             if (lab == 0).any() and (lab == 1).any():
                 a, b = idx[lab == 0], idx[lab == 1]
-            else:                                   # reference fallback
+            else:
                 a, b = idx[:1], idx[1:]
             balls[i] = a
-            balls.append(b)                         # do NOT advance i
+            balls.append(b)
         else:
             i += 1
     balls = [b for b in balls if len(b) >= min_ball_size]

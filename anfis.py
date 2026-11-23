@@ -1,3 +1,4 @@
+"""ANFIS baseline: fuzzy c-means rules with hybrid (gradient and least-squares) learning."""
 import numpy as np
 import torch
 

@@ -1,18 +1,9 @@
-"""
-Run one shard of an experiment (used by the GitHub Actions workflow).
-
-    python run_shard.py <experiment> <shard_index> <n_shards> [--slots 4]
-                        [--datasets a,b] [--models m1,m2]
-
-Each slot runs in its own single-threaded process; every finished task writes
-results/<tasks.result_name>. Tasks whose result file already exists are skipped,
-so a re-run only does the missing work.
-"""
+"""Run one shard of an experiment: python run.py <experiment> <shard> <n_shards> [--slots 4]."""
 import argparse
 import os
 
 for v in ("OMP_NUM_THREADS", "OPENBLAS_NUM_THREADS", "MKL_NUM_THREADS", "NUMEXPR_NUM_THREADS"):
-    os.environ.setdefault(v, "1")                     # one core per task: fair timing
+    os.environ.setdefault(v, "1")
 
 import platform
 import time
@@ -33,7 +24,7 @@ def run_slot(task_list):
     torch.set_num_threads(1)
     import datasets as D
     import evaluate as E
-    from tasks import result_name
+    from experiments import result_name
 
     cache, log = {}, []
     for t in task_list:
@@ -43,7 +34,7 @@ def run_slot(task_list):
             continue
         os.makedirs(os.path.dirname(path), exist_ok=True)
         if ds not in cache:
-            cache = {ds: D.load(ds)}                  # keep one dataset in memory
+            cache = {ds: D.load(ds)}
         X, y, _ = cache[ds]
         t0 = time.perf_counter()
         try:
@@ -69,7 +60,7 @@ def main():
     ap.add_argument("--models", default="")
     a = ap.parse_args()
 
-    from tasks import shard_tasks
+    from experiments import shard_tasks
     split = lambda s: [x for x in s.split(",") if x] or None
     shards, _ = shard_tasks(a.experiment, a.n_shards, a.slots, split(a.datasets), split(a.models))
     slots = [s for s in shards[a.shard] if s]

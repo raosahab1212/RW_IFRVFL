@@ -1,39 +1,4 @@
-"""
-RW-IFRVFL implemented directly from the manuscript: Section 3 and Algorithm 1
-for the model, Section 4.4 for the spread sigma, Table 5 for the search space.
-
-Training
-    1  min-max scale the features to [0, 1] (fitted on the training data)
-    2  draw W (L x d) and b (L) from U[-1, 1]
-    3  h_i = g(W x_i + b) with g the sigmoid;  z_i = [x_i; h_i]
-    4  class centroids c_{+1}, c_{-1}
-    5  nu_i = |{x_j in N_k(x_i) : y_j != y_i}| / k        Euclidean k-NN, x_i excluded
-    6  mu_i = (1 - nu_i) exp(-||x_i - c_{y_i}||^2 / (2 sigma^2))
-    7  pi_i = 1 - mu_i - nu_i                              >= 0 by construction
-    8  w_i  = (1 + mu_i - nu_i) / 2                         IFS score function
-    9  beta = (Z^T D Z + lambda I)^{-1} Z^T D y,  D = diag(w_1, ..., w_N)
-Inference
-       y_hat = sign(beta^T z)
-
-sigma = sigma_scale * sigma_bar, where sigma_bar is the mean intra-class centroid
-distance (Section 4.4): the mean of ||x_i - c_{y_i}|| over the training samples.
-
-EvidenceRVFL keeps steps 1-4 and replaces steps 5-9 (proposed revision):
-    with symmetric=True the neighbourhood evidence <1 - f_i, f_i> (f_i = share of
-    the k neighbours with another label) is discounted by the typicality
-    g_i = exp(-||x_i - c_{y_i}||^2 / (2 sigma^2)), as in Shafer's discounting:
-        mu_i = g_i (1 - f_i)   (as in step 6),   nu_i = g_i f_i,   pi_i = 1 - g_i;
-    symmetric=False keeps the manuscript's nu_i = f_i (ablation). Then the annotation,
-    the certain IF number <1, 0>, is fused with the data evidence using a trust alpha,
-        mu~_i = (1 - alpha) + alpha mu_i,   nu~_i = alpha nu_i,   pi~_i = alpha pi_i,
-    and the two parts of the fused number are used separately:
-        reliability weight   c_i = mu~_i + nu~_i = 1 - pi~_i
-        corrected target     t_i = y_i (mu~_i - nu~_i) / (mu~_i + nu~_i)
-        beta = (Z^T C Z + lambda I)^{-1} Z^T C t,   C = diag(c_1, ..., c_N).
-    alpha = 0 gives plain RVFL; t_i changes sign (label correction) exactly when
-    alpha (nu_i - mu_i) > 1 - alpha, i.e. alpha g_i (2 f_i - 1) > 1 - alpha when symmetric.
-"""
-
+"""RW-IFRVFL: reliability-weighted intuitionistic fuzzy RVFL classifier."""
 import hashlib
 
 import numpy as np
@@ -42,78 +7,70 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.utils.validation import check_array, check_is_fitted, check_X_y
 
-from rvfl_family import _neighbours     # Euclidean k-NN, self excluded, cached per matrix
-
-K_BIG = 50                              # neighbours kept for the large-neighbourhood models
-_NN_BIG = {}
+_CACHE = {}
 
 
-def _neighbours_big(X):
-    """Indices of the K_BIG nearest other samples of each row (cached per matrix)."""
-    key = hashlib.md5(np.ascontiguousarray(X).view(np.uint8)).hexdigest() + str(X.shape)
-    if key in _NN_BIG:
-        return _NN_BIG[key]
-    n = X.shape[0]
-    kq = min(K_BIG + 1, n)
-    idx = NearestNeighbors(n_neighbors=kq).fit(X).kneighbors(X, return_distance=False)
-    out = np.empty((n, kq - 1), dtype=int)
-    for r in range(n):
-        keep = idx[r] != r
-        if keep.all():                  # self not returned (many exact duplicates)
-            keep[-1] = False
-        out[r] = idx[r][keep]
-    if len(_NN_BIG) >= 32:
-        _NN_BIG.clear()
-    _NN_BIG[key] = out
-    return out
-
-# Table 5 of the manuscript
-SEARCH_SPACE = {
-    "n_hidden": [50, 100, 150, 200, 300],
-    "lam": [1e-4, 1e-3, 1e-2, 1e-1],
-    "k": [3, 5, 7, 9],
-    "sigma_scale": [0.5, 1.0, 1.5, 2.0],
-}
+def neighbours(X, k_max):
+    """Indices of the k_max nearest other samples of each row."""
+    key = (hashlib.md5(np.ascontiguousarray(X).view(np.uint8)).hexdigest(), X.shape, k_max)
+    if key not in _CACHE:
+        n = X.shape[0]
+        idx = NearestNeighbors(n_neighbors=min(k_max + 1, n)).fit(X).kneighbors(X, return_distance=False)
+        out = np.empty((n, idx.shape[1] - 1), dtype=int)
+        for r in range(n):
+            keep = idx[r] != r
+            if keep.all():
+                keep[-1] = False
+            out[r] = idx[r][keep]
+        if len(_CACHE) >= 64:
+            _CACHE.clear()
+        _CACHE[key] = out
+    return _CACHE[key]
 
 
-def _sigmoid(t):
-    return 0.5 * (1.0 + np.tanh(0.5 * t))       # 1 / (1 + e^-t) without overflow
+def clear_cache():
+    _CACHE.clear()
 
 
-def ifs_triple(Xn, y, k, sigma_scale, centroid=True, symmetric=False, big=False):
-    """Steps 4-7: (mu, nu, pi) and sigma for scaled features Xn, labels y in {-1, +1}."""
-    idx = _neighbours_big(Xn) if big else _neighbours(Xn)[1]
+def sigmoid(t):
+    return 0.5 * (1.0 + np.tanh(0.5 * t))
+
+
+def ifs_triple(Xn, y, k, sigma_scale, k_max, symmetric=False):
+    """Membership, non-membership, hesitation and spread for labels y in {-1, +1}."""
+    idx = neighbours(Xn, k_max)
     if k > idx.shape[1]:
-        raise ValueError(f"k={k} exceeds the cached neighbours ({idx.shape[1]}).")
+        raise ValueError(f"k={k} exceeds the available neighbours ({idx.shape[1]}).")
     nu = (y[idx[:, :k]] != y[:, None]).mean(axis=1)
-    if not centroid:                             # ablation: neighbourhood evidence only
-        return 1.0 - nu, nu, np.zeros_like(nu), np.inf
     cent = {c: Xn[y == c].mean(axis=0) for c in (-1.0, 1.0)}
     dist = np.linalg.norm(Xn - np.where(y[:, None] > 0, cent[1.0], cent[-1.0]), axis=1)
     sigma_bar = dist.mean()
     sigma = sigma_scale * (sigma_bar if sigma_bar > 0 else 1.0)
     g = np.exp(-dist ** 2 / (2.0 * sigma ** 2))
     mu = (1.0 - nu) * g
-    if symmetric:                                # typicality discounts both kinds of evidence
+    if symmetric:
         return mu, g * nu, 1.0 - g, sigma
     return mu, nu, 1.0 - mu - nu, sigma
 
 
 class RWIFRVFL(BaseEstimator, ClassifierMixin):
-    """Reliability-weighted intuitionistic fuzzy RVFL (binary)."""
+    """RW-IFRVFL for binary classification."""
 
-    def __init__(self, n_hidden=100, lam=1e-3, k=5, sigma_scale=1.0, random_state=42):
+    def __init__(self, n_hidden=100, lam=0.1, k=9, sigma_scale=1.5, alpha=0.75,
+                 symmetric=False, rule="signed", random_state=42):
         self.n_hidden = n_hidden
         self.lam = lam
         self.k = k
         self.sigma_scale = sigma_scale
+        self.alpha = alpha
+        self.symmetric = symmetric
+        self.rule = rule
         self.random_state = random_state
 
     def _augment(self, Xn):
-        return np.hstack([Xn, _sigmoid(Xn @ self.W_.T + self.b_)])
+        return np.hstack([Xn, sigmoid(Xn @ self.W_.T + self.b_)])
 
     def _setup(self, X, y):
-        """Steps 1-3; returns scaled X, augmented Z and labels in {-1, +1}."""
         X, y = check_X_y(X, y)
         self.classes_ = np.unique(y)
         if len(self.classes_) != 2:
@@ -129,13 +86,19 @@ class RWIFRVFL(BaseEstimator, ClassifierMixin):
     def _solve(self, Z, w, t):
         A = Z.T @ (Z * w[:, None]) + self.lam * np.eye(Z.shape[1])
         self.beta_ = np.linalg.solve(A, Z.T @ (w * t))
+        self.weights_, self.targets_ = w, t
 
     def fit(self, X, y):
         Xn, Z, y = self._setup(X, y)
-        mu, nu, pi, self.sigma_ = ifs_triple(Xn, y, self.k, self.sigma_scale)
-        self.mu_, self.nu_, self.pi_ = mu, nu, pi
-        self.weights_ = (1.0 + mu - nu) / 2.0                   # step 8
-        self._solve(Z, self.weights_, y)                         # step 9
+        mu, nu, _, self.sigma_ = ifs_triple(Xn, y, self.k, self.sigma_scale, 50, self.symmetric)
+        mu, nu = (1.0 - self.alpha) + self.alpha * mu, self.alpha * nu
+        s = mu - nu
+        if self.rule == "signed":
+            w, t = np.abs(s), np.where(s < 0, -y, y)
+        else:
+            r = mu + nu
+            w, t = r, y * np.divide(s, r, out=np.ones_like(r), where=r > 1e-12)
+        self._solve(Z, w, t)
         return self
 
     def decision_function(self, X):
@@ -144,82 +107,3 @@ class RWIFRVFL(BaseEstimator, ClassifierMixin):
 
     def predict(self, X):
         return np.where(self.decision_function(X) >= 0, self.classes_[1], self.classes_[0])
-
-
-class EvidenceRVFL(RWIFRVFL):
-    """Proposed revision: IF evidence gives the sample weight and a corrected target.
-
-    weight="none", target="label" / "pignistic", centroid=False and
-    symmetric=False are ablations.
-    """
-
-    def __init__(self, n_hidden=100, lam=1e-3, k=5, sigma_scale=1.0, alpha=1.0,
-                 weight="determinacy", target="balance", centroid=True, symmetric=True,
-                 random_state=42):
-        super().__init__(n_hidden, lam, k, sigma_scale, random_state)
-        self.alpha = alpha
-        self.weight = weight
-        self.target = target
-        self.centroid = centroid
-        self.symmetric = symmetric
-
-    def fit(self, X, y):
-        Xn, Z, y = self._setup(X, y)
-        mu, nu, pi, self.sigma_ = ifs_triple(Xn, y, self.k, self.sigma_scale,
-                                             self.centroid, self.symmetric)
-        a = self.alpha
-        mu_f, nu_f = (1.0 - a) + a * mu, a * nu                  # fused IF number
-        self.mu_, self.nu_, self.pi_ = mu_f, nu_f, a * pi
-        r = mu_f + nu_f                                          # determinacy = 1 - pi~
-        if self.target == "balance":
-            bal = np.divide(mu_f - nu_f, r, out=np.ones_like(r), where=r > 1e-12)
-        elif self.target == "pignistic":
-            bal = mu_f - nu_f
-        elif self.target == "label":
-            bal = np.ones_like(r)
-        else:
-            raise ValueError(f"unknown target {self.target!r}")
-        self.targets_ = bal * y
-        self.weights_ = r if self.weight == "determinacy" else np.ones_like(r)
-        self._solve(Z, self.weights_, self.targets_)
-        return self
-
-
-class SignedScoreRVFL(RWIFRVFL):
-    """Proposed revision (v3): the IF score of the annotation fused with the evidence.
-
-        S_i  = (1 - alpha) + alpha (mu_i - nu_i)     Chen-Tan score of the fused IF number
-        w_i  = |S_i|,    y~_i = sign(S_i) y_i
-        beta = (Z^T D Z + lambda I)^{-1} Z^T D y~,   D = diag(w)
-    alpha = 0 is plain RVFL and alpha = 1/2 is the published weight (1 + mu_i - nu_i)/2.
-    For alpha > 1/2 a sample is relabelled when nu_i - mu_i > (1 - alpha)/alpha, and
-    samples whose evidence cancels (S_i = 0) get no weight. The manuscript's (mu, nu) are
-    used unless symmetric=True; rule="balance" uses the v2 weight/target (ablation).
-    """
-
-    def __init__(self, n_hidden=100, lam=1e-3, k=5, sigma_scale=1.0, alpha=0.5,
-                 symmetric=False, rule="signed", big=True, random_state=42):
-        super().__init__(n_hidden, lam, k, sigma_scale, random_state)
-        self.alpha = alpha
-        self.symmetric = symmetric
-        self.rule = rule
-        self.big = big
-
-    def fit(self, X, y):
-        Xn, Z, y = self._setup(X, y)
-        mu, nu, pi, self.sigma_ = ifs_triple(Xn, y, self.k, self.sigma_scale,
-                                             symmetric=self.symmetric, big=self.big)
-        a = self.alpha
-        mu_f, nu_f = (1.0 - a) + a * mu, a * nu
-        self.mu_, self.nu_, self.pi_ = mu_f, nu_f, 1.0 - mu_f - nu_f
-        s = mu_f - nu_f                                          # fused score in [-1, 1]
-        if self.rule == "signed":
-            self.weights_, self.targets_ = np.abs(s), np.where(s < 0, -y, y)
-        elif self.rule == "balance":
-            r = mu_f + nu_f
-            self.weights_ = r
-            self.targets_ = y * np.divide(s, r, out=np.ones_like(r), where=r > 1e-12)
-        else:
-            raise ValueError(f"unknown rule {self.rule!r}")
-        self._solve(Z, self.weights_, self.targets_)
-        return self

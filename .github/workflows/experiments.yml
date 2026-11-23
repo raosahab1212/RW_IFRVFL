@@ -6,8 +6,8 @@ on:
       experiment:
         description: Experiment to run
         type: choice
-        options: [e1, e7, e3, e4_label, e4_feature, e4_label_abl, e4_feature_abl, v2_e1, v2_label, v2_feature, v2_e7, v3_e1, v3_label, v3_feature, v3_e7, sens_e1, sens_label]
-        default: e1
+        options: [benchmark, label_noise, feature_noise, case_study, ablation, ablation_label, ablation_feature, sensitivity, sensitivity_label]
+        default: benchmark
       shards:
         description: Number of parallel jobs (max 256; 20 run at once on the free plan)
         default: "60"
@@ -45,7 +45,7 @@ jobs:
       - run: pip install -r requirements.txt
       - run: lscpu | head -20
       - run: >
-          python -u run_shard.py ${{ inputs.experiment }} ${{ matrix.shard }} ${{ inputs.shards }}
+          python -u run.py ${{ inputs.experiment }} ${{ matrix.shard }} ${{ inputs.shards }}
           --slots "$(nproc)" --datasets "${{ inputs.datasets }}" --models "${{ inputs.models }}"
       - uses: actions/upload-artifact@v4
         if: always()

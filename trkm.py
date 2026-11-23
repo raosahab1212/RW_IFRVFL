@@ -1,9 +1,4 @@
-"""
-TRKM (Twin Restricted Kernel Machine), scikit-learn wrapper.
-
-Same equations as the authors' public reference implementation, with per-fit
-min-max scaling. Memory is O(N^2): cap training size on large datasets.
-"""
+"""Twin Restricted Kernel Machine (TRKM), following the authors' reference implementation."""
 import time
 import numpy as np
 
@@ -13,13 +8,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 
 class TRKMClassifier(BaseEstimator, ClassifierMixin):
-    """
-    Memory-efficient Scikit-learn compatible TRKM classifier.
-
-    The mathematical formulation is kept unchanged.
-    Kernel matrices are computed in batches to avoid
-    large memory allocations on datasets such as Adult.
-    """
+    """TRKM classifier; kernel matrices are computed in batches to bound memory."""
 
     def __init__(
         self,

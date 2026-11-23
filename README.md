@@ -1,52 +1,60 @@
-# RW-IFRVFL experiments
+# RW-IFRVFL: A Reliability-Weighted Intuitionistic Fuzzy Random Vector Functional-Link Classifier for Robust Binary Classification
 
-Experiment code for the RW-IFRVFL classifier (reliability-weighted intuitionistic
-fuzzy RVFL) and the baselines it is compared with. All reported numbers are produced
-by these scripts; tables are generated from the result CSVs.
+Please cite the following paper if you are using this code.
 
-## Layout
+Reference: P. Yadav, K. Khan, A. Shakya and A. K. Tiwari, "A Reliability-Weighted Intuitionistic Fuzzy Random Vector Functional-Link Classifier for Robust Binary Classification," Computers & Electrical Engineering (under review).
 
-| File | Purpose |
+## Method
+
+Each training sample receives an intuitionistic fuzzy pair: membership μ = (1 − f)·g and non-membership ν = f, where g is the Gaussian similarity of the sample to its class centroid and f is the fraction of its k nearest neighbours with a different label. The fused score S = (1 − α) + α(μ − ν) gives the sample weight |S| and the training target sign(S)·y of a weighted RVFL solved in closed form, β = (ZᵀDZ + λI)⁻¹ZᵀDỹ. α = 0 is the plain RVFL and α = 1/2 is the earlier score weighting (1 + μ − ν)/2.
+
+## Experimental setup
+
+The experiments were run on GitHub-hosted Ubuntu runners (x86-64, 4 vCPUs) with Python 3.13 and the package versions in `requirements.txt`; every model fit used one thread.
+
+- Outer loop: stratified 10-fold cross-validation (seed 42); the fold indices are in `splits/`.
+- Inner loop: 5-fold cross-validation on the training part (3-fold on a stratified 5,000-row subsample when N > 5,000), macro-F1 criterion, at most 30 configurations per model.
+- Imputation, one-hot encoding and min-max scaling are fitted on the training part only.
+- Label and feature noise are applied to the training part only, and every model is retuned at each noise level.
+
+## Hyperparameters of RW-IFRVFL
+
+| Parameter | Values |
 |---|---|
-| `datasets.py` | Loads the 14 benchmark datasets + protein case study; no preprocessing, no oversampling. `python datasets.py` prints the dataset summary table. |
-| `rw_ifrvfl.py` | RW-IFRVFL implemented step by step from the manuscript (Algorithm 1; spread from Sec. 4.4; search space from Table 5). Used for RW-IFRVFL in every experiment. Also `EvidenceRVFL` (model `RW-IFRVFL2`), the proposed revision: typicality-discounted IF evidence fused with the annotation, giving each sample a reliability weight (1 − hesitation) and a corrected target; its ablations are the `v2:*` models. `SignedScoreRVFL` (model `RW-IFRVFL3`) uses the IF score S = (1 − α) + α(μ − ν) of the annotation fused with the evidence: weight \|S\|, label sign(S)·y. α = 0 is plain RVFL and α = ½ is exactly the published RW-IFRVFL; its ablations are the `v3:*` models. |
-| `rvfl_family.py` | One RVFL estimator (`FuzzyRVFL`) covering RVFL, IFRVFLC and all ablation variants (same random layer and solver; its `rw` variant equals `rw_ifrvfl.py`). IFRVFLC follows Mishra, Gupta & Hazarika (2023), Eqs. 22–24, with their kernel-width and radius grids. |
-| `gbtsvm.py` | GBTSVM, checked against the authors' reference code. |
-| `trkm.py` | TRKM, checked against the authors' reference code. |
-| `models.py` | Model registry, search spaces, equal tuning budget (30 configs). |
-| `evaluate.py` | Protocol: saved outer 10-fold splits, nested tuning inside the training folds, train-only noise, metrics and timings. |
-| `smoke_test.py` | Quick check: all models, 2 folds, small budget. |
-| `paper_tables.py`, `paper_figures.py` | LaTeX tables and figures of the manuscript's Sections 5-6, generated from `results/*_all.csv` (`python paper_tables.py <out_dir>`). |
-| `legacy/` | Earlier implementations; ANFIS and NF-RVFL are used from here. |
-| `splits/` | Outer split indices, created once per dataset and reused everywhere. |
+| Hidden neurons L | 50, 100, 150, 200, 300 |
+| Regularisation λ | 1e-4, 1e-3, 1e-2, 1e-1, 1 |
+| Neighbours k | 3, 9, 25, 50 |
+| Spread scale s | 0.5, 1, 1.5, 2 |
+| Trust α | 0, 0.5, 0.75, 1 |
 
-## Protocol
+## Usage
 
-- Outer: stratified 10-fold CV, seed 42; the indices are saved in `splits/<dataset>.npz`.
-- Inner: 5-fold CV on the outer-training part (3-fold on a stratified 5,000-row
-  subsample when N > 5,000); criterion is macro-F1; up to 30 configurations per model.
-- Preprocessing is fitted on the training fold only: median / most-frequent
-  imputation, one-hot encoding, then min-max scaling.
-- Positive class = minority class. Reported: accuracy, macro-F1, minority-F1,
-  AUC (from continuous scores), fit time and predict time (single-threaded).
-- Label noise is flipped on training labels only, using the same splits; models
-  are retuned at each level. Test labels are never corrupted.
-- O(N^2) models (SVM, TRKM, ANFIS, GBTSVM) train on a capped stratified subsample
-  on large datasets (`models.CAPPED`) (reported with the results).
+```
+pip install -r requirements.txt
+python run.py benchmark 0 1 --slots 4 --datasets heart --models RW-IFRVFL
+python merge.py
+python make_tables.py tables
+python make_figures.py figures
+```
 
-## Running on GitHub Actions
+Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablation`, `ablation_label`, `ablation_feature`, `sensitivity`, `sensitivity_label`. On GitHub: Actions → experiments → Run workflow; the merge job uploads `results-<experiment>`.
 
-Actions tab -> `experiments` -> Run workflow, choosing the experiment
-(`e1` benchmark, `e3` ablation, `e4_label` / `e4_feature` noise, `e4_label_abl` /
-`e4_feature_abl` ablation under noise, `e7` case study; `v2_e1`, `v2_label`, `v2_feature`,
-`v2_e7` and `v3_e1`, `v3_label`, `v3_feature`, `v3_e7` run the two revisions and their
-ablations on the same settings)
-and the number of shards. Each shard job uploads its per-task CSVs; the `merge`
-job combines them into `results-<experiment>` (`<exp>_all.csv`, `<exp>_summary.csv`).
-Re-running a failed job only recomputes tasks whose result files are missing
-within that job.
+## Description of files
 
-Locally: `python run_shard.py e1 0 1 --datasets heart --models RW-IFRVFL`, then
-`python merge.py`.
+- `rw_ifrvfl.py`: RW-IFRVFL classifier.
+- `rvfl_variants.py`: RVFL, IFRVFLC and the weighting variants of the ablation study.
+- `gbtsvm.py`, `trkm.py`, `anfis.py`, `nfrvfl.py`: GBTSVM, TRKM, ANFIS and NF-RVFL baselines.
+- `models.py`: model registry and hyperparameter grids.
+- `datasets.py`: dataset loading and preprocessing.
+- `evaluate.py`: nested cross-validation, noise injection and metrics.
+- `experiments.py`: experiment definitions and sharding.
+- `run.py`: runs one shard of an experiment.
+- `merge.py`: combines the per-task files into `results/<experiment>_all.csv`.
+- `make_tables.py`, `make_figures.py`: tables and figures of the paper.
+- `build_halophilic.py`: builds `data/halophilic.csv` from the Zhang and Ge (2013) sequences.
+- `data/`: the 14 benchmark datasets and the halophilic protein dataset.
+- `splits/`: outer-fold indices.
 
-GBTSVM and TRKM follow the original authors' public implementations.
+## Remarks
+
+GBTSVM and TRKM follow the public implementations of Quadir, Sajid and Tanveer (GBTSVM) and Quadir and Tanveer (TRKM); IFRVFLC follows Mishra, Gupta and Hazarika (2023).

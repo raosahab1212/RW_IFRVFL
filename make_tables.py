@@ -1,11 +1,4 @@
-"""
-LaTeX tables and figures for Sections 5-6 of the manuscript, from the result files.
-
-    python paper_tables.py <out_dir>      (reads results/*_all.csv)
-
-RW-IFRVFL in the paper is the revised method (model RW-IFRVFL3 in the harness); the
-Revision-1 formulation (model RW-IFRVFL) appears only in the ablation.
-"""
+"""LaTeX tables of the manuscript from results/*_all.csv: python make_tables.py <out_dir>."""
 import os
 import sys
 import warnings
@@ -20,7 +13,7 @@ R = os.path.join(HERE, "results")
 OUT = sys.argv[1] if len(sys.argv) > 1 else os.path.join(HERE, "paper")
 os.makedirs(OUT, exist_ok=True)
 TOL = 1e-3
-NEW = "RW-IFRVFL3"
+NEW = "RW-IFRVFL"
 BASE = ["SVM", "RF", "XGBoost", "LightGBM", "CatBoost", "NB", "KNN", "NF-RVFL", "ANFIS",
         "GBTSVM", "TRKM", "RVFL", "IFRVFLC"]
 MODELS = BASE + [NEW]
@@ -29,7 +22,7 @@ CITE = {"SVM": "SVM~\\cite{hearst1998}", "RF": "RF~\\cite{breiman2001}", "XGBoos
         "NB": "NB~\\cite{zhang2004}", "KNN": "KNN~\\cite{cunningham2021}", "NF-RVFL": "NF-RVFL~\\cite{Sajid2024}",
         "ANFIS": "ANFIS~\\cite{Jang1993}", "GBTSVM": "GBTSVM~\\cite{quadir2025}", "TRKM": "TRKM~\\cite{quadir2025trkm}",
         "RVFL": "RVFL~\\cite{Pao1992}", "IFRVFLC": "IFRVFLC~\\cite{Mishra2023}", NEW: "\\textbf{RW-IFRVFL}"}
-PLAIN = {m: m for m in MODELS} | {"RF": "Random Forest", NEW: "RW-IFRVFL"}
+PLAIN = {m: m for m in MODELS} | {"RF": "Random Forest"}
 DS = {"adult": "Adult", "australian": "Australian", "breast": "Breast", "diabetes": "Diabetes",
       "heart": "Heart", "horse-colic": "Horse-Colic", "ionosphere": "Ionosphere", "magic": "Magic",
       "mammographic": "Mammographic", "monk-2": "Monk-2", "mushroom": "Mushroom", "phoneme": "Phoneme",
@@ -48,12 +41,9 @@ def write(name, text):
 
 
 def holm(p):
-    """Holm-adjusted p-values (same order as given)."""
     p = np.asarray(p, float)
-    order = np.argsort(p)
-    adj = np.empty_like(p)
-    running = 0.0
-    for rank, i in enumerate(order):
+    adj, running = np.empty_like(p), 0.0
+    for rank, i in enumerate(np.argsort(p)):
         running = max(running, (len(p) - rank) * p[i])
         adj[i] = min(1.0, running)
     return adj
@@ -80,9 +70,7 @@ def per_dataset(df, metric, agg="mean"):
     return t[[m for m in MODELS if m in t.columns]]
 
 
-# ------------------------------------------------------------------ benchmark tables
-clean = load("e1", "v3_e1")
-clean = clean[clean.model.isin(MODELS)]
+clean = load("benchmark")
 
 
 def benchmark_table(metric, label, caption, lower_better=False, digits=4):
@@ -95,7 +83,7 @@ def benchmark_table(metric, label, caption, lower_better=False, digits=4):
         cells = []
         for m in t.columns:
             v = r[m]
-            s = (f"{v:.{digits}f}" if not lower_better else (f"{v:.3g}" if v >= 0.001 else "$<$0.001"))
+            s = f"{v:.{digits}f}" if not lower_better else (f"{v:.3g}" if v >= 0.001 else "$<$0.001")
             cells.append(f"\\textbf{{{s}}}" if abs(v - best) <= (1e-4 if not lower_better else 1e-9) else s)
         rows.append(f"{DS[ds]} & " + " & ".join(cells) + " \\\\")
     if not lower_better:
@@ -127,11 +115,10 @@ def benchmark_table(metric, label, caption, lower_better=False, digits=4):
 acc, acc_r = benchmark_table("accuracy", "accuracy", "Accuracy of all models on the 14 benchmark datasets")
 f1, f1_r = benchmark_table("f1_macro", "f1", "Macro-averaged F1-score of all models on the 14 benchmark datasets")
 auc, auc_r = benchmark_table("auc", "auc", "AUC of all models on the 14 benchmark datasets")
-_ = benchmark_table("fit_s", "execution_time",
-                    "Training time in seconds (median final fit over the 10 folds, neighbourhood search included)",
-                    lower_better=True)
+benchmark_table("fit_s", "execution_time",
+                "Training time in seconds (median final fit over the 10 folds, neighbourhood search included)",
+                lower_better=True)
 
-# ------------------------------------------------------------------ statistics (benchmark)
 stat_rows, summary = [], {}
 for metric, t, rk in [("accuracy", acc, acc_r), ("f1_macro", f1, f1_r), ("auc", auc, auc_r)]:
     fr = friedmanchisquare(*[t[m] for m in t.columns])
@@ -166,9 +153,9 @@ Baseline & W/T/L & $p_{{\\mathrm{{Holm}}}}$ & $\\Delta$rank & W/T/L & $p_{{\\mat
 \\end{{table*}}
 """)
 
-# ------------------------------------------------------------------ noise tables
-def noise_table(kind, col, base_exp, v3_exp):
-    df = load(base_exp, v3_exp)
+
+def noise_table(kind, col, exp):
+    df = load(exp)
     df = df[df.model.isin(MODELS)]
     g = df.groupby([col, "dataset", "model"]).accuracy.mean().unstack()[MODELS]
     lv = g.groupby(level=0).mean()
@@ -188,7 +175,8 @@ def noise_table(kind, col, base_exp, v3_exp):
             i = BASE.index(m)
             w, ti, l = wtl(g[NEW], g[m])
             w2, t2, l2 = wtl(hi[NEW], hi[m])
-            extra = f"{w}/{ti}/{l} & {fmt_p(p_all[i])}{'*' if p_all[i] < 0.05 else ''} & {w2}/{t2}/{l2} & {fmt_p(p_hi[i])}{'*' if p_hi[i] < 0.05 else ''}"
+            extra = (f"{w}/{ti}/{l} & {fmt_p(p_all[i])}{'*' if p_all[i] < 0.05 else ''} & "
+                     f"{w2}/{t2}/{l2} & {fmt_p(p_hi[i])}{'*' if p_hi[i] < 0.05 else ''}")
         name = "\\textbf{RW-IFRVFL}" if m == NEW else PLAIN[m]
         rows.append(f"{name} & " + " & ".join(cells) + f" & {rk[m]:.2f} & {extra} \\\\")
     write(f"tab_{kind}_noise.tex", f"""\\begin{{table*}}[htbp]
@@ -209,19 +197,18 @@ Model & 5\\% & 10\\% & 20\\% & 30\\% & 40\\% & Rank & W/T/L & $p_{{\\mathrm{{Hol
     return g, lv
 
 
-label_g, label_lv = noise_table("label", "label_noise", "e4_label", "v3_label")
-feat_g, feat_lv = noise_table("feature", "feat_noise", "e4_feature", "v3_feature")
+label_g, label_lv = noise_table("label", "label_noise", "label_noise")
+feat_g, feat_lv = noise_table("feature", "feat_noise", "feature_noise")
 
-# ------------------------------------------------------------------ ablation: weighting variants
-VARIANTS = [("RVFL", "$w=1$ (plain RVFL)"), ("abl:fuzzy", "$w=g$"), ("abl:nonmem", "$w=1-\\nu$"),
-            ("abl:pw_unscaled", "$w=g(1-\\nu)$"), ("abl:sf_unscaled", "$w=(1+g-\\nu)/2$"),
-            ("abl:pw_scaled", "$w=\\mu(1-\\nu)$"), ("RW-IFRVFL", "$w=(1+\\mu-\\nu)/2$ (Revision 1)"),
-            ("abl:rw_ha", "$w=$ Ha score of $(\\mu,\\nu)$"), ("abl:rw_shuffled", "Revision-1 weights, shuffled"),
+VARIANTS = [("RVFL", "$w=1$ (plain RVFL)"), ("abl:centroid", "$w=g$"), ("abl:neighbour", "$w=1-\\nu$"),
+            ("abl:product_unscaled", "$w=g(1-\\nu)$"), ("abl:score_unscaled", "$w=(1+g-\\nu)/2$"),
+            ("abl:product", "$w=\\mu(1-\\nu)$"), ("abl:score", "$w=(1+\\mu-\\nu)/2$ (Revision 1)"),
+            ("abl:ha", "$w=$ Ha score of $(\\mu,\\nu)$"), ("abl:shuffled", "Revision-1 weights, shuffled"),
             ("IFRVFLC", "IFRVFLC~\\cite{Mishra2023}"), (NEW, "\\textbf{RW-IFRVFL (signed score)}")]
 names = [v for v, _ in VARIANTS]
-ac = load("e1", "e3", "v3_e1"); ac = ac[ac.model.isin(names)]
-al = load("e4_label", "e4_label_abl", "v3_label"); al = al[al.model.isin(names)]
-af = load("e4_feature", "e4_feature_abl", "v3_feature"); af = af[af.model.isin(names)]
+ac = load("benchmark", "ablation"); ac = ac[ac.model.isin(names)]
+al = load("label_noise", "ablation_label"); al = al[al.model.isin(names)]
+af = load("feature_noise", "ablation_feature"); af = af[af.model.isin(names)]
 tc = ac.groupby(["dataset", "model"]).accuracy.mean().unstack()[names]
 tl = al.groupby(["label_noise", "dataset", "model"]).accuracy.mean().unstack()[names]
 tf = af.groupby(["feat_noise", "dataset", "model"]).accuracy.mean().unstack()[names]
@@ -252,17 +239,16 @@ Weight & Acc. & Rank & Acc. & Acc. & RVFL & IFRVFLC \\\\
 \\end{{table*}}
 """)
 
-# ------------------------------------------------------------------ ablation: components of the revised method
-COMP = [(NEW, "RW-IFRVFL (full)"), ("v3:half", "trust fixed at $\\alpha=\\tfrac12$"),
-        ("v3:smallk", "$k\\le 15$ instead of $k\\le 50$"), ("v3:balance", "weight $1-\\tilde\\pi$, target $\\tilde y=\\mathrm{balance}$"),
-        ("v3:sym", "non-membership discounted by $g$")]
+COMP = [(NEW, "RW-IFRVFL (full)"), ("comp:alpha_half", "trust fixed at $\\alpha=\\tfrac12$"),
+        ("comp:small_k", "$k\\le 15$ instead of $k\\le 50$"),
+        ("comp:balance", "weight $1-\\tilde\\pi$, target $\\tilde y=\\mathrm{balance}$"),
+        ("comp:discounted", "non-membership discounted by $g$")]
 cn = [c for c, _ in COMP]
-cc = load("v3_e1"); cl = load("v3_label"); cf = load("v3_feature"); ce = load("v3_e7")
-gc = cc.groupby(["dataset", "model"]).accuracy.mean().unstack()[cn]
-gl = cl.groupby(["label_noise", "dataset", "model"]).accuracy.mean().unstack()[cn]
-gf = cf.groupby(["feat_noise", "dataset", "model"]).accuracy.mean().unstack()[cn]
+gc = load("benchmark", "ablation").groupby(["dataset", "model"]).accuracy.mean().unstack()[cn]
+gl = load("label_noise", "ablation_label").groupby(["label_noise", "dataset", "model"]).accuracy.mean().unstack()[cn]
+gf = load("feature_noise", "ablation_feature").groupby(["feat_noise", "dataset", "model"]).accuracy.mean().unstack()[cn]
 hl = gl[gl.index.get_level_values(0) >= 0.3]
-ec = ce.groupby("model").accuracy.mean()
+ec = load("case_study").groupby("model").accuracy.mean()
 rows = []
 for c, lbl in COMP:
     def cm(t):
@@ -271,7 +257,8 @@ for c, lbl in COMP:
         w, ti, l = wtl(t[NEW], t[c])
         p = wilc(t[NEW], t[c])
         return f"{w}/{ti}/{l}, {fmt_p(p)}{'*' if p < 0.05 else ''}"
-    rows.append(f"{lbl} & {gc[c].mean():.4f} & {gl[c].mean():.4f} & {hl[c].mean():.4f} & {gf[c].mean():.4f} & {ec[c]:.4f} & {cm(gc)} & {cm(gl)} \\\\")
+    rows.append(f"{lbl} & {gc[c].mean():.4f} & {gl[c].mean():.4f} & {hl[c].mean():.4f} & {gf[c].mean():.4f} & "
+                f"{ec[c]:.4f} & {cm(gc)} & {cm(gl)} \\\\")
 write("tab_components.tex", f"""\\begin{{table*}}[htbp]
 \\centering
 \\caption{{Components of the revised RW-IFRVFL, each changed in turn. Mean accuracy ($\\uparrow$) on the clean benchmark, under label noise (all levels and 30--40\\%), under feature noise and on the halophilic case study; last two columns: the full model against each variant on the clean data and under label noise (wins/ties/losses of the full model, Wilcoxon $p$; $^*$: $p<0.05$). All rows use the grid of Table~\\ref{{tab:hyperparameter_search}}.}}
@@ -288,19 +275,16 @@ Variant & & all & 30--40\\% & noise & philic & clean & label noise \\\\
 \\end{{table*}}
 """)
 
-# ------------------------------------------------------------------ case study
-cs = load("e7", "v3_e7")
+cs = load("case_study")
 cs = cs[cs.model.isin(MODELS)]
 t = cs.groupby("model")[["accuracy", "f1_macro", "auc", "fit_s"]].agg(["mean", "std"])
 rows = []
-order = t[("accuracy", "mean")].sort_values(ascending=False).index
-for m in order:
+for m in t[("accuracy", "mean")].sort_values(ascending=False).index:
     cells = []
     for met in ["accuracy", "f1_macro", "auc"]:
         mu, sd = t.loc[m, (met, "mean")], t.loc[m, (met, "std")]
-        best = t[(met, "mean")].max()
         s = f"{mu:.4f} $\\pm$ {sd:.4f}"
-        cells.append(f"\\textbf{{{s}}}" if abs(mu - best) < 1e-9 else s)
+        cells.append(f"\\textbf{{{s}}}" if abs(mu - t[(met, "mean")].max()) < 1e-9 else s)
     ft = cs[cs.model == m].fit_s.median()
     name = "\\textbf{RW-IFRVFL}" if m == NEW else CITE[m]
     rows.append(f"{name} & " + " & ".join(cells) + f" & {ft:.3g} \\\\")
@@ -319,14 +303,22 @@ Model & Accuracy & Macro-F1 & AUC & Time (s) \\\\
 \\end{{table}}
 """)
 
-# ------------------------------------------------------------------ numbers for the text
 lines = [f"CD = {cd:.3f}"]
 for metric in ["accuracy", "f1_macro", "auc"]:
     s = summary[metric]
-    lines.append(f"{metric}: Friedman p = {s['friedman_p']:.2e}; RW rank {s['ranks'][NEW]:.2f}; "
-                 "ranks " + ", ".join(f"{m} {s['ranks'][m]:.2f}" for m in sorted(MODELS, key=lambda m: s['ranks'][m])))
-    lines.append("   significant (Holm): " + ", ".join(f"{b} {s['wtl'][b]} p={s['holm'][b]:.3f}" for b in BASE if s['holm'][b] < 0.05))
-lines.append("clean mean acc: " + ", ".join(f"{m} {acc[m].mean():.4f}" for m in MODELS))
-lines.append("label levels:\n" + label_lv.round(3).to_string())
-lines.append("feature levels:\n" + feat_lv.round(3).to_string())
+    lines.append(f"{metric}: Friedman p = {s['friedman_p']:.2e}; ranks " + ", ".join(
+        f"{m} {s['ranks'][m]:.2f}" for m in sorted(MODELS, key=lambda m: s['ranks'][m])))
+    lines.append("   significant after Holm: " + ", ".join(
+        f"{b} {s['wtl'][b]} p={s['holm'][b]:.3f}" for b in BASE if s['holm'][b] < 0.05))
+lines.append("clean mean accuracy: " + ", ".join(f"{m} {acc[m].mean():.4f}" for m in MODELS))
+lines.append("label noise by level:\n" + label_lv.round(3).to_string())
+lines.append("feature noise by level:\n" + feat_lv.round(3).to_string())
+inner = pd.concat([load("benchmark", "ablation"), load("label_noise", "ablation_label"),
+                   load("feature_noise", "ablation_feature")])
+three = inner[inner.model.isin([NEW, "int:balance", "comp:discounted"])].groupby("model").inner_f1.mean()
+lines.append("choice among the three formulations, mean inner-CV macro-F1: " + str(three.round(4).to_dict()))
+hz = load("ablation_label").groupby(["label_noise", "dataset", "model"]).accuracy.mean().unstack()
+for other in ["int:no_weight", "int:pignistic"]:
+    lines.append(f"hesitation, int:balance vs {other} under label noise: "
+                 f"{wtl(hz['int:balance'], hz[other])}, p = {wilc(hz['int:balance'], hz[other]):.3f}")
 write("numbers.txt", "\n".join(lines) + "\n")

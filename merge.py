@@ -1,15 +1,11 @@
-"""
-Combine per-task result files into one CSV per experiment and report coverage.
-
-    python merge.py [results_dir]      -> results_dir/<exp>_all.csv
-"""
+"""Combine per-task result files into results/<experiment>_all.csv and report coverage."""
 import glob
 import os
 import sys
 
 import pandas as pd
 
-from tasks import EXPERIMENTS, all_tasks, result_name
+from experiments import EXPERIMENTS, all_tasks, result_name
 
 root = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.dirname(os.path.abspath(__file__)), "results")
 for exp in EXPERIMENTS:

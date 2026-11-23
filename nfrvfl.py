@@ -1,3 +1,4 @@
+"""Neuro-fuzzy RVFL (NF-RVFL) baseline."""
 import numpy as np
 
 from scipy.special import expit

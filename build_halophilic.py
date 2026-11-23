@@ -1,17 +1,4 @@
-"""
-Build data/halophilic.csv from the Zhang & Ge (2013) benchmark.
-
-Source: 139 halophilic (Salinibacter ruber DSM 13855) and 139 non-halophilic
-(Chlorobium / Pelodictyon luteolum DSM 273) UniProtKB/Swiss-Prot sequences,
-as distributed in the HaloClass repository (github.com/kushnarang/haloclass-source,
-MIT licence): data/zhang139_src/zhang139.fasta.
-
-Features (442), the sequence-composition scheme of Nath (2016):
-  20  amino-acid composition (%)
-  400 dipeptide composition (% of adjacent residue pairs)
-  11  property-group composition (%)
-  11  property-group 2-grams (% of adjacent pairs with both residues in the group)
-"""
+"""Build data/halophilic.csv (Zhang and Ge, 2013) with the 442 composition features of Nath (2016)."""
 import itertools
 import os
 
@@ -22,7 +9,7 @@ SRC = os.path.join(HERE, "data", "zhang139_src", "zhang139.fasta")
 OUT = os.path.join(HERE, "data", "halophilic.csv")
 
 AA = "ARNDCQEGHILKMFPSTWYV"
-GROUPS = {  # EMBOSS pepstats classes + hydrophobic / hydrophilic
+GROUPS = {
     "Tiny": "ACGST", "Small": "ANDCGPSTV", "Aliphatic": "ILV", "Non-polar": "ACGILMFPWYV",
     "Aromatic": "HFWY", "Polar": "RNDQEHKST", "Charged": "RDEHK", "Basic": "RHK",
     "Acidic": "DE", "Hydrophobic": "ACILMFWYV", "Hydrophilic": "NDQEK",

@@ -4,9 +4,9 @@ catboost_info/
 logs/
 smoke_*.log
 smoke_results.csv
-# third-party reference code used only for validation (licence not checked)
+# local copies of the original authors' code used by checks/ (see checks/README.md)
 reference/
-# dataset whose source/licence is still to be confirmed
+# local files that are not part of the release
 data/protien.csv
 NOTES_internal.md
 figures/

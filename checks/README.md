@@ -19,3 +19,8 @@ Result (GNU Octave 8.4): maximum relative difference of the test scores 1.4e-15 
 
 Result: TRKM identical test predictions in 45/45 cases; GBTSVM identical granular balls and test accuracy
 in 60/60 cases (five datasets, saved outer folds, several hyperparameter settings).
+
+**RVFL special case** (Proposition 2): `python checks/compare_alpha0.py` fits RW-IFRVFL with α = 0 and plain
+RVFL on every outer fold of Heart, Pima, Wisconsin and Ionosphere for three (L, λ) settings.
+
+Result: identical predictions in 120/120 cases; maximum relative difference of the decision values 0.

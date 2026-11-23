@@ -23,7 +23,7 @@ def run_slot(task_list):
     try:
         import torch
         torch.set_num_threads(1)
-    except ImportError:  # only NF-RVFL and ANFIS need torch
+    except ImportError:  # only ANFIS needs torch
         pass
     import datasets as D
     import evaluate as E

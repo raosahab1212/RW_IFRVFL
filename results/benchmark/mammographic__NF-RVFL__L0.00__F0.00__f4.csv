@@ -1,2 +1,0 @@
-dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
-mammographic,NF-RVFL,4,0.0,0.0,865,"{'n_hidden': 100, 'reg': 0.1}",0.8332152295165459,4.347830543999976,0.8125,0.8104431768319438,0.7906976744186046,0.8932461873638343,0.0075298319999319,0.000841390000005,benchmark,4.375739399000054,x86_64,4,Linux-7.0.0-1019-azure-x86_64-with-glibc2.43,3.13.18

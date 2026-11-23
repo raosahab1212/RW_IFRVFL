@@ -80,24 +80,26 @@ def benchmark_table(metric, label, caption, lower_better=False, digits=4):
     for ds in sorted(t.index, key=lambda d: DS[d]):
         r = t.loc[ds]
         best = r.min() if lower_better else r.max()
+        show = (lambda v: f"{v:.{digits}f}") if not lower_better else (lambda v: f"{v:.3g}" if v >= 0.001 else "$<$0.001")
         cells = []
         for m in t.columns:
-            v = r[m]
-            s = f"{v:.{digits}f}" if not lower_better else (f"{v:.3g}" if v >= 0.001 else "$<$0.001")
-            cells.append(f"\\textbf{{{s}}}" if abs(v - best) <= (1e-4 if not lower_better else 1e-9) else s)
+            s = show(r[m])
+            cells.append(f"\\textbf{{{s}}}" if s == show(best) else s)
         rows.append(f"{DS[ds]} & " + " & ".join(cells) + " \\\\")
     if not lower_better:
         avg = t.mean()
         rows.append("\\hline\nAverage & " + " & ".join(
-            (f"\\textbf{{{avg[m]:.{digits}f}}}" if avg[m] == avg.max() else f"{avg[m]:.{digits}f}") for m in t.columns) + " \\\\")
+            (f"\\textbf{{{avg[m]:.{digits}f}}}" if f"{avg[m]:.{digits}f}" == f"{avg.max():.{digits}f}" else f"{avg[m]:.{digits}f}") for m in t.columns) + " \\\\")
     rk = ranks.mean()
     rows.append(("\\hline\n" if lower_better else "") + "Average rank & " + " & ".join(
-        (f"\\textbf{{{rk[m]:.2f}}}" if rk[m] == rk.min() else f"{rk[m]:.2f}") for m in t.columns) + " \\\\")
+        (f"\\textbf{{{rk[m]:.2f}}}" if f"{rk[m]:.2f}" == f"{rk.min():.2f}" else f"{rk[m]:.2f}") for m in t.columns) + " \\\\")
     arrow = "$\\downarrow$" if lower_better else "$\\uparrow$"
+    note = ("Three significant digits; the lowest value per dataset in bold." if lower_better else
+            "Mean over the 10 outer test folds; the best value per dataset (at the precision shown) in bold.")
     head = " & ".join(f"\\rotatebox{{90}}{{{CITE[m]}}}" for m in t.columns)
     write(f"tab_{label}.tex", f"""\\begin{{table*}}[htbp]
 \\centering
-\\caption{{{caption} ({arrow}). Mean over the 10 outer test folds; best value per dataset in bold.}}
+\\caption{{{caption} ({arrow}). {note}}}
 \\label{{tab:{label}}}
 \\resizebox{{\\textwidth}}{{!}}{{%
 \\begin{{tabular}}{{l{'c' * len(t.columns)}}}
@@ -168,7 +170,7 @@ def noise_table(kind, col, exp):
         cells = []
         for L in LEVELS:
             v = lv.loc[L, m]
-            cells.append(f"\\textbf{{{v:.3f}}}" if abs(v - lv.loc[L].max()) < 1e-9 else f"{v:.3f}")
+            cells.append(f"\\textbf{{{v:.3f}}}" if f"{v:.3f}" == f"{lv.loc[L].max():.3f}" else f"{v:.3f}")
         if m == NEW:
             extra = "--- & --- & --- & ---"
         else:
@@ -284,10 +286,10 @@ for m in t[("accuracy", "mean")].sort_values(ascending=False).index:
     for met in ["accuracy", "f1_macro", "auc"]:
         mu, sd = t.loc[m, (met, "mean")], t.loc[m, (met, "std")]
         s = f"{mu:.4f} $\\pm$ {sd:.4f}"
-        cells.append(f"\\textbf{{{s}}}" if abs(mu - t[(met, "mean")].max()) < 1e-9 else s)
+        cells.append(f"\\textbf{{{s}}}" if f"{mu:.4f}" == f"{t[(met, 'mean')].max():.4f}" else s)
     ft = cs[cs.model == m].fit_s.median()
     name = "\\textbf{RW-IFRVFL}" if m == NEW else CITE[m]
-    rows.append(f"{name} & " + " & ".join(cells) + f" & {ft:.3g} \\\\")
+    rows.append(f"{name} & " + " & ".join(cells) + f" & {(f'{ft:.3g}' if ft >= 0.001 else '$<$0.001')} \\\\")
 write("tab_case_study.tex", f"""\\begin{{table}}[htbp]
 \\centering
 \\caption{{Halophilic protein classification (278 proteins, 442 features): mean $\\pm$ standard deviation over the 10 outer folds ($\\uparrow$) and median training time in seconds. Rows sorted by accuracy; best in bold.}}
@@ -322,3 +324,37 @@ for other in ["int:no_weight", "int:pignistic"]:
     lines.append(f"hesitation, int:balance vs {other} under label noise: "
                  f"{wtl(hz['int:balance'], hz[other])}, p = {wilc(hz['int:balance'], hz[other]):.3f}")
 write("numbers.txt", "\n".join(lines) + "\n")
+
+
+def sens_case_table():
+    """One-at-a-time sensitivity on the halophilic data next to the clean benchmark mean."""
+    from models import SENS_DEFAULT, SENS_SWEEPS
+    case, bench = load("sensitivity_case"), load("sensitivity")
+    rel = pd.read_csv(os.path.join(R, "relabel_halophilic.csv"), index_col=0)["relabelled"]
+    hal, ben = case.groupby("model").accuracy.mean(), bench.groupby("model").accuracy.mean()
+    names = {"sigma_scale": "spread scale $s$", "k": "neighbours $k$", "alpha": "trust $\\alpha$"}
+    rows = []
+    for p in ["sigma_scale", "k", "alpha"]:
+        for i, v in enumerate(SENS_SWEEPS[p]):
+            m = "sens:default" if v == SENS_DEFAULT[p] else f"sens:{p}={v:g}"
+            mark = "$^\\circ$" if v == SENS_DEFAULT[p] else ""
+            r = f"{rel.loc[v] * 100:.1f}" if p == "sigma_scale" else "---"
+            head = f"\\multirow{{{len(SENS_SWEEPS[p])}}}{{*}}{{{names[p]}}}" if i == 0 else ""
+            rows.append(f"{head} & {v:g}{mark} & {hal[m]:.3f} & {r} & {ben[m]:.3f} \\\\")
+        rows.append("\\hline")
+    write("tab_sens_case.tex", f"""\\begin{{table}}[htbp]
+\\centering
+\\caption{{One-at-a-time sensitivity of RW-IFRVFL on the halophilic data (442 features) and, for comparison, on the 14 clean benchmark datasets: mean accuracy ($\\uparrow$) over the 10 outer folds without tuning, around the default configuration ($^\\circ$; $L={SENS_DEFAULT['n_hidden']}$, $\\lambda={SENS_DEFAULT['lam']:g}$, $k={SENS_DEFAULT['k']}$, $s={SENS_DEFAULT['sigma_scale']:g}$, $\\alpha={SENS_DEFAULT['alpha']:g}$). Relabelled: share of halophilic training samples with $S_i<0$, in \\%.}}
+\\label{{tab:sens_case}}
+\\small
+\\begin{{tabular}}{{llccc}}
+\\hline
+Parameter & Value & Halophilic & Relabelled (\\%) & 14 benchmarks \\\\
+\\hline
+{chr(10).join(rows)}
+\\end{{tabular}}
+\\end{{table}}
+""")
+
+
+sens_case_table()

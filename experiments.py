@@ -16,6 +16,7 @@ EXPERIMENTS = {
     "ablation_feature": dict(datasets=NOISE_DATASETS, models=ABLATION_MODELS, label=[0.0], feat=NOISE_LEVELS),
     "sensitivity": dict(datasets=BENCHMARK, models=SENS_MODELS, label=[0.0], feat=[0.0]),
     "sensitivity_label": dict(datasets=NOISE_DATASETS, models=SENS_MODELS, label=[0.30], feat=[0.0]),
+    "sensitivity_case": dict(datasets=CASE_STUDIES, models=SENS_MODELS, label=[0.0], feat=[0.0]),
 }
 
 SMALL_COST = {"SVM": 15, "RF": 200, "XGBoost": 110, "LightGBM": 25, "CatBoost": 450,

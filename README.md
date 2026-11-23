@@ -37,7 +37,7 @@ python make_tables.py tables
 python make_figures.py figures
 ```
 
-Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablation`, `ablation_label`, `ablation_feature`, `sensitivity`, `sensitivity_label`. On GitHub: Actions → experiments → Run workflow; the merge job uploads `results-<experiment>`.
+Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablation`, `ablation_label`, `ablation_feature`, `sensitivity`, `sensitivity_label`, `sensitivity_case`. `python concentration.py` computes the distance-concentration and relabelling statistics of the case study (`results/distance_concentration.csv`, `results/relabel_halophilic.csv`). On GitHub: Actions → experiments → Run workflow; the merge job uploads `results-<experiment>`.
 
 ## Description of files
 
@@ -51,8 +51,10 @@ Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablatio
 - `run.py`: runs one shard of an experiment.
 - `merge.py`: combines the per-task files into `results/<experiment>_all.csv`.
 - `make_tables.py`, `make_figures.py`: tables and figures of the paper.
+- `concentration.py`: distance concentration of the centroid membership and share of relabelled samples.
 - `build_halophilic.py`: builds `data/halophilic.csv` from the Zhang and Ge (2013) sequences.
 - `data/`: the 14 benchmark datasets and the halophilic protein dataset.
+- `results/`: per-task result files (`results/<experiment>/`) and the merged `results/<experiment>_all.csv` from which every table and figure is generated.
 - `splits/`: outer-fold indices.
 
 ## Remarks

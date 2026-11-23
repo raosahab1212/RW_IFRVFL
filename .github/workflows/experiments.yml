@@ -6,7 +6,7 @@ on:
       experiment:
         description: Experiment to run
         type: choice
-        options: [benchmark, label_noise, feature_noise, case_study, ablation, ablation_label, ablation_feature, sensitivity, sensitivity_label]
+        options: [benchmark, label_noise, feature_noise, case_study, ablation, ablation_label, ablation_feature, sensitivity, sensitivity_label, sensitivity_case]
         default: benchmark
       shards:
         description: Number of parallel jobs (max 256; 20 run at once on the free plan)

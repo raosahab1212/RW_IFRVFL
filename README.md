@@ -10,7 +10,7 @@ Each training sample receives an intuitionistic fuzzy pair: membership Î¼ = (1 â
 
 ## Experimental setup
 
-The experiments were run on GitHub-hosted runners (Ubuntu 26.04, x86-64, 4 vCPUs) with Python 3.13.18 and the package versions in `requirements.txt`; every model fit used one thread. The processor varied between jobs: AMD EPYC 9V45, 9V74 or 7763, or Intel Xeon 6975P-C, 6973P-C or Platinum 8573C.
+The experiments were run on GitHub-hosted runners (Ubuntu 26.04, x86-64, 4 vCPUs) with Python 3.13.18 and the package versions in `requirements.txt`; every model fit used one thread. The processor varied between jobs: AMD EPYC 9V45, 9V74 or 7763, or Intel Xeon 6975P-C, 6973P-C, Platinum 8573C or Platinum 8370C (from the `lscpu` output in the logs of the 188 experiment jobs).
 
 - Outer loop: stratified 10-fold cross-validation (seed 42); the fold indices are in `splits/`.
 - Inner loop: 5-fold cross-validation on the training part (3-fold on a stratified 5,000-row subsample when N > 5,000), macro-F1 criterion, at most 30 configurations per model.

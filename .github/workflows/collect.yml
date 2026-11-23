@@ -1,0 +1,29 @@
+name: collect
+# One-off helper: copies the per-shard results of finished experiment runs into this branch.
+on:
+  push:
+    branches: [revision-2-results]
+    paths: [.github/workflows/collect.yml]
+permissions:
+  contents: write
+  actions: read
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with: {pattern: res-benchmark-*, path: results/benchmark, merge-multiple: true, run-id: "45140592545", github-token: "${{ github.token }}"}
+      - uses: actions/download-artifact@v4
+        with: {pattern: res-label_noise-*, path: results/label_noise, merge-multiple: true, run-id: "45140601111", github-token: "${{ github.token }}"}
+      - uses: actions/download-artifact@v4
+        with: {pattern: res-case_study-*, path: results/case_study, merge-multiple: true, run-id: "45140617192", github-token: "${{ github.token }}"}
+      - uses: actions/download-artifact@v4
+        with: {pattern: res-feature_noise-*, path: results/feature_noise, merge-multiple: true, run-id: "45140609443", github-token: "${{ github.token }}"}
+      - run: |
+          ls results/benchmark | grep -c NF-RVFL || true
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add results
+          git commit -m "Add the re-run NF-RVFL results (benchmark, label_noise, feature_noise, case_study)"
+          git push

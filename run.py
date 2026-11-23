@@ -20,8 +20,11 @@ def run_slot(task_list):
     import warnings
     warnings.filterwarnings("ignore")
     import pandas as pd
-    import torch
-    torch.set_num_threads(1)
+    try:
+        import torch
+        torch.set_num_threads(1)
+    except ImportError:  # only NF-RVFL and ANFIS need torch
+        pass
     import datasets as D
     import evaluate as E
     from experiments import result_name

@@ -1,7 +1,6 @@
 __pycache__/
 *.pyc
 catboost_info/
-results/
 logs/
 smoke_*.log
 smoke_results.csv

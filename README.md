@@ -52,6 +52,7 @@ Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablatio
 - `merge.py`: combines the per-task files into `results/<experiment>_all.csv`.
 - `make_tables.py`, `make_figures.py`: tables and figures of the paper.
 - `concentration.py`: distance concentration of the centroid membership and share of relabelled samples.
+- `checks/`: comparisons of `nfrvfl.py`, `trkm.py` and `gbtsvm.py` with the original authors' code.
 - `build_halophilic.py`: builds `data/halophilic.csv` from the Zhang and Ge (2013) sequences.
 - `data/`: the 14 benchmark datasets and the halophilic protein dataset.
 - `results/`: per-task result files (`results/<experiment>/`) and the merged `results/<experiment>_all.csv` from which every table and figure is generated.
@@ -59,4 +60,4 @@ Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablatio
 
 ## Remarks
 
-GBTSVM and TRKM follow the public implementations of Quadir, Sajid and Tanveer (GBTSVM) and Quadir and Tanveer (TRKM); IFRVFLC follows Mishra, Gupta and Hazarika (2023).
+NF-RVFL is a port of the public MATLAB code of Sajid, Malik, Tanveer and Suganthan (2024); GBTSVM and TRKM follow the public implementations of Quadir, Sajid and Tanveer (GBTSVM) and Quadir and Tanveer (TRKM); all three were checked against that code (`checks/`). IFRVFLC follows Mishra, Gupta and Hazarika (2023).

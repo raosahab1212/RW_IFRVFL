@@ -16,6 +16,7 @@ The experiments were run on GitHub-hosted runners (Ubuntu 26.04, x86-64, 4 vCPUs
 - Inner loop: 5-fold cross-validation on the training part (3-fold on a stratified 5,000-row subsample when N > 5,000), macro-F1 criterion, at most 30 configurations per model.
 - Imputation, one-hot encoding and min-max scaling are fitted on the training part only.
 - Label and feature noise are applied to the training part only, and every model is retuned at each noise level.
+- Adversarial perturbations (`adversarial.py`) are built once per outer fold from surrogates fitted to the clean training part and shared by all models. Label attacks flip 5–40% of the training labels of each class, either the samples a logistic-regression surrogate classifies most confidently (`adv_label_far`) or those closest to its boundary (`adv_label_near`), following the farthest-first and nearest-first attacks of Xiao et al. (2015). The evasion attack (`adv_evasion`) moves each test sample by 20-step L∞ PGD on an MLP surrogate (two hidden layers of 64 ReLU units) with a per-feature budget of ε times the training standard deviation, ε ∈ {0.05, 0.1, 0.2, 0.3, 0.4, 0.6, 0.8, 1}, and reports a random-sign perturbation of the same budget as a control; models are trained on clean data, and categorical features are not perturbed.
 
 ## Hyperparameters of RW-IFRVFL
 
@@ -39,7 +40,7 @@ python make_figures.py figures
 
 `run.py` skips every task whose result file already exists, and all result files are included in the repository, so on a fresh clone the command above runs nothing. To recompute tasks, move the corresponding files out of `results/<experiment>/` first, e.g. `mv results/benchmark results/benchmark_published`; `python merge.py` then reports any missing tasks.
 
-Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablation`, `ablation_label`, `ablation_feature`, `sensitivity`, `sensitivity_label`, `sensitivity_case`. `python concentration.py` computes the distance-concentration and relabelling statistics of the case study (`results/distance_concentration.csv`, `results/relabel_halophilic.csv`). On GitHub: Actions → experiments → Run workflow; the merge job uploads `results-<experiment>`.
+Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablation`, `ablation_label`, `ablation_feature`, `sensitivity`, `sensitivity_label`, `sensitivity_case`, `adv_label_far`, `adv_label_near`, `adv_evasion`. `python concentration.py` computes the distance-concentration and relabelling statistics of the case study (`results/distance_concentration.csv`, `results/relabel_halophilic.csv`). On GitHub: Actions → experiments → Run workflow; the merge job uploads `results-<experiment>`.
 
 ## Description of files
 
@@ -49,6 +50,7 @@ Experiments: `benchmark`, `label_noise`, `feature_noise`, `case_study`, `ablatio
 - `models.py`: model registry and hyperparameter grids.
 - `datasets.py`: dataset loading and preprocessing.
 - `evaluate.py`: nested cross-validation, noise injection and metrics.
+- `adversarial.py`: surrogate-based adversarial label flips and PGD evasion sets (`adv/`, built by the workflow's prepare job).
 - `experiments.py`: experiment definitions and sharding.
 - `run.py`: runs one shard of an experiment.
 - `merge.py`: combines the per-task files into `results/<experiment>_all.csv`.

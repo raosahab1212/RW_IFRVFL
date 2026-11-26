@@ -20,7 +20,7 @@ for exp in EXPERIMENTS:
     print(f"{exp}: {len(have & expected)}/{len(expected)} tasks done, {len(missing)} missing")
     for m in missing[:20]:
         print("   missing", m)
-    keys = ["dataset", "model", "label_noise", "feat_noise"]
+    keys = ["dataset", "model", "label_noise", "feat_noise"] + [c for c in ("attack", "adv_eps") if c in df]
     summ = df.groupby(keys)[["accuracy", "f1_macro", "auc", "fit_s"]].mean()
     summ["folds"] = df.groupby(keys).size()
     summ.round(4).to_csv(os.path.join(root, f"{exp}_summary.csv"))

@@ -7,6 +7,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score, f1_score, roc_auc_score
 from sklearn.model_selection import StratifiedKFold, train_test_split
 
+import adversarial
 import gbtsvm
 import models as M
 import rvfl_variants
@@ -60,6 +61,15 @@ def gaussian_feature_noise(Xt, rate, seed):
     return Xt + np.random.default_rng(seed).normal(0.0, 1.0, Xt.shape) * rate * sd
 
 
+def train_labels(y, tr, rate, seed, kind="random", adv=None):
+    """Noisy training labels: random flips, or flips chosen by the adversarial surrogate (far / near)."""
+    if not rate:
+        return y[tr]
+    if kind == "random":
+        return flip_labels(y[tr], rate, seed)
+    return adversarial.flipped_labels(y, tr, rate, kind, adv)
+
+
 def scores_of(model, X):
     if hasattr(model, "decision_function"):
         s = np.asarray(model.decision_function(X), dtype=float)
@@ -81,7 +91,7 @@ def metrics(y, pred, score):
     return out
 
 
-def fit_score(name, params, Xtr, ytr, Xte, yte, feat_noise=0.0, noise_seed=0):
+def fit_score(name, params, Xtr, ytr, Xte, yte, feat_noise=0.0, noise_seed=0, extra_tests=None):
     pre = make_preprocessor(Xtr).fit(Xtr)
     A, B = pre.transform(Xtr), pre.transform(Xte)
     A = gaussian_feature_noise(A, feat_noise, noise_seed)
@@ -94,10 +104,18 @@ def fit_score(name, params, Xtr, ytr, Xte, yte, feat_noise=0.0, noise_seed=0):
         pred = model.predict(B)
         score = scores_of(model, B)
         t2 = time.perf_counter()
-    return {**metrics(yte, pred, score), "fit_s": t1 - t0, "predict_s": t2 - t1}
+        extra = {}
+        for key, Xe in (extra_tests or {}).items():
+            E = pre.transform(Xe)
+            extra[key] = metrics(yte, model.predict(E), scores_of(model, E))
+    out = {**metrics(yte, pred, score), "fit_s": t1 - t0, "predict_s": t2 - t1}
+    if extra_tests:
+        out["_extra"] = extra
+    return out
 
 
-def tune(name, X, y, train_idx, label_noise=0.0, feat_noise=0.0, noise_seed=0, n_configs=M.N_CONFIGS):
+def tune(name, X, y, train_idx, label_noise=0.0, feat_noise=0.0, noise_seed=0, n_configs=M.N_CONFIGS,
+         label_kind="random", adv=None):
     cands = M.configs(name, n_configs)
     if len(cands) == 1:
         return cands[0], np.nan, 0.0
@@ -105,7 +123,7 @@ def tune(name, X, y, train_idx, label_noise=0.0, feat_noise=0.0, noise_seed=0, n
     folds = 3 if len(train_idx) > TUNE_MAX else 5
     ytr_all = y.copy()
     if label_noise:
-        ytr_all[train_idx] = flip_labels(y[train_idx], label_noise, noise_seed)
+        ytr_all[train_idx] = train_labels(y, train_idx, label_noise, noise_seed, label_kind, adv)
     inner = list(StratifiedKFold(folds, shuffle=True, random_state=SEED)
                  .split(np.zeros(len(idx)), ytr_all[idx]))
     t0 = time.perf_counter()
@@ -127,17 +145,19 @@ def tune(name, X, y, train_idx, label_noise=0.0, feat_noise=0.0, noise_seed=0, n
 
 
 def run_outer(name, X, y, dataset, label_noise=0.0, feat_noise=0.0, tune_params=True,
-              fixed_params=None, folds=None, n_configs=M.N_CONFIGS):
+              fixed_params=None, folds=None, n_configs=M.N_CONFIGS, label_kind="random", evasion=False):
     rows = []
     for f, (tr, te) in enumerate(outer_splits(dataset, y)):
         if folds is not None and f not in folds:
             continue
         seed = SEED + f
+        adv = adversarial.load(dataset, f) if evasion or (label_noise and label_kind != "random") else None
         if tune_params:
-            params, inner_f1, tune_s = tune(name, X, y, tr, label_noise, feat_noise, seed, n_configs)
+            params, inner_f1, tune_s = tune(name, X, y, tr, label_noise, feat_noise, seed, n_configs,
+                                            label_kind, adv)
         else:
             params, inner_f1, tune_s = dict(fixed_params or {}), np.nan, 0.0
-        ytr = flip_labels(y[tr], label_noise, seed) if label_noise else y[tr]
+        ytr = train_labels(y, tr, label_noise, seed, label_kind, adv)
         cap = M.CAPPED.get(name)
         keep = np.arange(len(tr))
         if cap and len(tr) > cap:
@@ -145,10 +165,19 @@ def run_outer(name, X, y, dataset, label_noise=0.0, feat_noise=0.0, tune_params=
         rw_ifrvfl.clear_cache()
         rvfl_variants._D2_CACHE.clear()
         gbtsvm._BALL_CACHE.clear()
-        r = fit_score(name, dict(params), X.iloc[tr[keep]], ytr[keep], X.iloc[te], y[te], feat_noise, seed)
-        rows.append(dict(dataset=dataset, model=name, fold=f, label_noise=label_noise,
-                         feat_noise=feat_noise, train_n=len(keep), params=repr(params),
-                         inner_f1=inner_f1, tune_s=tune_s, **r))
+        extra = adversarial.evasion_tests(X, te, adv) if evasion else None
+        r = fit_score(name, dict(params), X.iloc[tr[keep]], ytr[keep], X.iloc[te], y[te], feat_noise, seed,
+                      extra_tests=extra)
+        base = dict(dataset=dataset, model=name, fold=f, label_noise=label_noise, feat_noise=feat_noise,
+                    train_n=len(keep), params=repr(params), inner_f1=inner_f1, tune_s=tune_s)
+        if label_kind != "random":
+            base["label_kind"] = label_kind
+        extra_res = r.pop("_extra", {})
+        if evasion:
+            base.update(attack="none", adv_eps=0.0)
+        rows.append({**base, **r})
+        for (attack, eps), m in extra_res.items():
+            rows.append({**base, **r, **m, "attack": attack, "adv_eps": eps})
     return rows
 
 

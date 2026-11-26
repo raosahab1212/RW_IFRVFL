@@ -27,7 +27,7 @@ def run_slot(task_list):
         pass
     import datasets as D
     import evaluate as E
-    from experiments import result_name
+    from experiments import EXPERIMENTS, result_name
 
     cache, log = {}, []
     for t in task_list:
@@ -41,7 +41,9 @@ def run_slot(task_list):
         X, y, _ = cache[ds]
         t0 = time.perf_counter()
         try:
-            rows = E.run_outer(model, X, y, ds, label_noise=ln, feat_noise=fn, folds=[fold])
+            cfg = EXPERIMENTS[exp]
+            rows = E.run_outer(model, X, y, ds, label_noise=ln, feat_noise=fn, folds=[fold],
+                               label_kind=cfg.get("label_kind", "random"), evasion=cfg.get("evasion", False))
             for r in rows:
                 r.update(experiment=exp, wall_s=time.perf_counter() - t0, **HW)
             pd.DataFrame(rows).to_csv(path, index=False)

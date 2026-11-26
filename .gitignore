@@ -2,6 +2,8 @@ __pycache__/
 *.pyc
 catboost_info/
 logs/
+# adversarial sets, rebuilt by the prepare job of the workflow
+adv/
 smoke_*.log
 smoke_results.csv
 # local copies of the original authors' code used by checks/ (see checks/README.md)

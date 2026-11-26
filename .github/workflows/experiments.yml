@@ -6,7 +6,7 @@ on:
       experiment:
         description: Experiment to run
         type: choice
-        options: [benchmark, label_noise, feature_noise, case_study, ablation, ablation_label, ablation_feature, sensitivity, sensitivity_label, sensitivity_case]
+        options: [benchmark, label_noise, feature_noise, case_study, ablation, ablation_label, ablation_feature, sensitivity, sensitivity_label, sensitivity_case, adv_label_far, adv_label_near, adv_evasion]
         default: benchmark
       shards:
         description: Number of parallel jobs (max 256; 20 run at once on the free plan)
@@ -27,8 +27,34 @@ jobs:
       - id: p
         run: python3 -c "import json; print('shards=' + json.dumps(list(range(int('${{ inputs.shards }}')))))" >> "$GITHUB_OUTPUT"
 
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: requirements.txt
+      - run: pip install -r requirements.txt
+        if: startsWith(inputs.experiment, 'adv_')
+      - run: lscpu | head -20
+      - name: Build the adversarial sets once, so that every job uses the same ones
+        run: |
+          mkdir -p adv
+          if [[ "${{ inputs.experiment }}" == adv_* ]]; then
+            python -u adversarial.py --datasets "${{ inputs.datasets }}"
+          else
+            echo "not an adversarial experiment" > adv/none.txt
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: adv-${{ inputs.experiment }}
+          path: adv/
+          retention-days: 90
+
   run:
-    needs: plan
+    needs: [plan, prepare]
     runs-on: ubuntu-latest
     timeout-minutes: 355
     strategy:
@@ -43,6 +69,10 @@ jobs:
           cache: pip
           cache-dependency-path: requirements.txt
       - run: pip install -r requirements.txt
+      - uses: actions/download-artifact@v4
+        with:
+          name: adv-${{ inputs.experiment }}
+          path: adv
       - run: lscpu | head -20
       - run: >
           python -u run.py ${{ inputs.experiment }} ${{ matrix.shard }} ${{ inputs.shards }}
@@ -72,6 +102,11 @@ jobs:
           pattern: res-${{ inputs.experiment }}-*
           path: results/${{ inputs.experiment }}
           merge-multiple: true
+      - uses: actions/download-artifact@v4
+        with:
+          name: adv-${{ inputs.experiment }}
+          path: results/adv
+      - run: rm -f results/adv/*.npz results/adv/none.txt
       - run: python merge.py results
       - uses: actions/upload-artifact@v4
         with:

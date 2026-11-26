@@ -8,9 +8,12 @@ Xiao et al., Neurocomputing 160 (2015) 53-62).
 Evasion (test part): an MLP surrogate is fitted to the clean training part and each test sample is
 moved by 20-step L-infinity PGD on the surrogate's cross-entropy, with the per-feature budget
 eps * (training standard deviation of the feature), as for the Gaussian feature noise. A random-sign
-perturbation of the same budget is the control. Categorical (one-hot) features are not perturbed.
+perturbation of the same budget is the control. Categorical (one-hot) features are not perturbed, and
+experiments with freeze_discrete (adv_evasion_cont) also leave unperturbed the numeric columns with at
+most DISCRETE_MAX distinct training values (integer codes such as the chest-pain type of heart).
 
-python adversarial.py [--datasets a,b]   writes adv/<dataset>__f<fold>.npz and adv/surrogates.csv
+python adversarial.py [--experiment adv_evasion] [--datasets a,b]
+    writes adv/<dataset>__f<fold>.npz and adv/surrogates.csv (adv/surrogates_cont.csv with freeze_discrete)
 """
 import argparse
 import os
@@ -24,6 +27,7 @@ ADV_DIR = os.path.join(HERE, "adv")
 SEED = 42
 EVASION_LEVELS = [0.05, 0.10, 0.20, 0.30, 0.40, 0.60, 0.80, 1.00]
 PGD_STEPS = 20
+DISCRETE_MAX = 10
 
 
 def path(dataset, fold):
@@ -107,7 +111,7 @@ def _acc(net, Z, y):
         return float(((net(torch.tensor(Z, dtype=torch.float32)).squeeze(1) > 0).numpy() == y).mean())
 
 
-def build(dataset, fold, X, y, tr, te):
+def build(dataset, fold, X, y, tr, te, freeze_discrete=False):
     from datasets import make_preprocessor
     pre = make_preprocessor(X.iloc[tr]).fit(X.iloc[tr])
     A, B = pre.transform(X.iloc[tr]), pre.transform(X.iloc[te])
@@ -118,9 +122,11 @@ def build(dataset, fold, X, y, tr, te):
     sd = A.std(axis=0)
     unit = np.zeros(A.shape[1])
     unit[:len(num)] = sd[:len(num)]                      # one-hot columns get no budget
+    frozen = [c for c in num if X[c].iloc[tr].nunique() <= DISCRETE_MAX] if freeze_discrete else []
+    unit[[num.index(c) for c in frozen]] = 0.0
 
     ytr, yte = y[tr], y[te]
-    out = dict(test_idx=te, num_cols=np.array(num, dtype=str))
+    out = dict(test_idx=te, num_cols=np.array(num, dtype=str), frozen_cols=np.array(frozen, dtype=str))
 
     lr = LogisticRegression(C=1.0, max_iter=5000).fit(A, ytr)
     f = lr.decision_function(A)
@@ -133,7 +139,7 @@ def build(dataset, fold, X, y, tr, te):
     seed = SEED + fold
     net = _train_mlp(A, ytr, seed)
     signs = np.random.default_rng(seed).choice([-1.0, 1.0], size=B.shape)
-    stats = dict(dataset=dataset, fold=fold, lr_train_acc=lr.score(A, ytr), lr_test_acc=lr.score(B, yte),
+    stats = dict(dataset=dataset, fold=fold, n_frozen=len(frozen), lr_train_acc=lr.score(A, ytr), lr_test_acc=lr.score(B, yte),
                  mlp_train_acc=_acc(net, A, ytr), mlp_test_acc=_acc(net, B, yte))
     raw_te = imputed[te]
     safe = np.where(scale > 0, scale, 1.0)
@@ -149,28 +155,33 @@ def build(dataset, fold, X, y, tr, te):
 
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--experiment", default="adv_evasion")
     ap.add_argument("--datasets", default="")
     a = ap.parse_args()
     import datasets as D
     from evaluate import outer_splits
-    from experiments import NOISE_DATASETS
+    from experiments import EXPERIMENTS
+    cfg = EXPERIMENTS[a.experiment]
+    freeze = cfg.get("freeze_discrete", False)
     try:
         import torch
         torch.set_num_threads(1)
     except ImportError:
         pass
     os.makedirs(ADV_DIR, exist_ok=True)
-    chosen = [d for d in a.datasets.split(",") if d] or NOISE_DATASETS
+    chosen = [d for d in a.datasets.split(",") if d] or cfg["datasets"]
     rows = []
     for ds in chosen:
         X, y, _ = D.load(ds)
         for fold, (tr, te) in enumerate(outer_splits(ds, y)):
-            out, stats = build(ds, fold, X, y, tr, te)
+            out, stats = build(ds, fold, X, y, tr, te, freeze)
             np.savez_compressed(path(ds, fold), **out)
             rows.append(stats)
             print(f"{ds} fold {fold}: MLP test acc {stats['mlp_test_acc']:.3f}, "
-                  f"under PGD eps=0.4 {stats['mlp_pgd_acc_0.40']:.3f}", flush=True)
-    pd.DataFrame(rows).to_csv(os.path.join(ADV_DIR, "surrogates.csv"), index=False)
+                  f"under PGD eps=0.4 {stats['mlp_pgd_acc_0.40']:.3f}, {stats['n_frozen']} columns frozen",
+                  flush=True)
+    name = "surrogates_cont.csv" if freeze else "surrogates.csv"
+    pd.DataFrame(rows).to_csv(os.path.join(ADV_DIR, name), index=False)
 
 
 if __name__ == "__main__":

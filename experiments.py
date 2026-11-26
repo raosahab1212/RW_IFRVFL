@@ -22,6 +22,8 @@ EXPERIMENTS = {
     "adv_label_near": dict(datasets=NOISE_DATASETS, models=MAIN_MODELS, label=NOISE_LEVELS, feat=[0.0],
                            label_kind="near"),
     "adv_evasion": dict(datasets=NOISE_DATASETS, models=MAIN_MODELS, label=[0.0], feat=[0.0], evasion=True),
+    "adv_evasion_cont": dict(datasets=NOISE_DATASETS, models=MAIN_MODELS, label=[0.0], feat=[0.0], evasion=True,
+                             freeze_discrete=True),
 }
 
 SMALL_COST = {"SVM": 15, "RF": 200, "XGBoost": 110, "LightGBM": 25, "CatBoost": 450,

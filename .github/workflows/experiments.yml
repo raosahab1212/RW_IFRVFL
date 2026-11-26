@@ -6,7 +6,7 @@ on:
       experiment:
         description: Experiment to run
         type: choice
-        options: [benchmark, label_noise, feature_noise, case_study, ablation, ablation_label, ablation_feature, sensitivity, sensitivity_label, sensitivity_case, adv_label_far, adv_label_near, adv_evasion]
+        options: [benchmark, label_noise, feature_noise, case_study, ablation, ablation_label, ablation_feature, sensitivity, sensitivity_label, sensitivity_case, adv_label_far, adv_label_near, adv_evasion, adv_evasion_cont]
         default: benchmark
       shards:
         description: Number of parallel jobs (max 256; 20 run at once on the free plan)
@@ -43,7 +43,7 @@ jobs:
         run: |
           mkdir -p adv
           if [[ "${{ inputs.experiment }}" == adv_* ]]; then
-            python -u adversarial.py --datasets "${{ inputs.datasets }}"
+            python -u adversarial.py --experiment "${{ inputs.experiment }}" --datasets "${{ inputs.datasets }}"
           else
             echo "not an adversarial experiment" > adv/none.txt
           fi

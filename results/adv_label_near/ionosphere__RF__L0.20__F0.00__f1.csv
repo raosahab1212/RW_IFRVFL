@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,RF,1,0.2,0.0,316,"{'n_estimators': 200, 'min_samples_leaf': 2, 'max_features': 'sqrt', 'max_depth': 5}",0.876029623278653,76.37487817299998,near,0.7714285714285715,0.7619047619047619,0.7142857142857143,0.8659420289855073,0.3135589780000032,0.013518342999986999,adv_label_near,76.721802352,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

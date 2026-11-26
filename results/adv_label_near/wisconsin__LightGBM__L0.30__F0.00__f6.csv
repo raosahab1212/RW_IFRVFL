@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,LightGBM,6,0.3,0.0,512,"{'num_leaves': 63, 'n_estimators': 500, 'min_child_samples': 20, 'learning_rate': 0.05}",0.8577853362754981,20.945591956999976,near,0.7368421052631579,0.7246376811594203,0.6666666666666666,0.9060846560846562,0.42901720599996906,0.006631518000006054,adv_label_near,21.40305863200001,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

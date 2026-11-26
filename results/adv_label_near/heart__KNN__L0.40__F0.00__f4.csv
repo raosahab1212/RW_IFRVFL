@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+heart,KNN,4,0.4,0.0,243,"{'n_neighbors': 9, 'weights': 'distance'}",0.7095429175080344,1.6314687450000065,near,0.7407407407407407,0.7407407407407407,0.7407407407407407,0.8888888888888888,0.0010642820000157371,0.0018516409999733696,adv_label_near,1.6619459880000136,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

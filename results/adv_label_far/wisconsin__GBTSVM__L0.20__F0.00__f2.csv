@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,GBTSVM,2,0.2,0.0,512,"{'purity': 0.925, 'min_ball_size': 2, 'd1': 0.1}",0.6329586774646645,36.426280938000005,far,0.5263157894736842,0.5239715434580885,0.49056603773584906,0.5793650793650794,0.7757910830000014,0.0007971040000143148,adv_label_far,37.23209438400001,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

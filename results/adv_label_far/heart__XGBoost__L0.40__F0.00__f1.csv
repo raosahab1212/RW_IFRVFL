@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+heart,XGBoost,1,0.4,0.0,243,"{'subsample': 0.85, 'n_estimators': 100, 'max_depth': 7, 'learning_rate': 0.05, 'colsample_bytree': 0.7}",0.6398934166159033,10.949945698999954,far,0.2962962962962963,0.2805049088359046,0.17391304347826086,0.20555555555555552,0.032175049999978,0.0011362040000904017,adv_label_far,11.003094666999914,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,RF,7,0.1,0.0,512,"{'n_estimators': 200, 'min_samples_leaf': 1, 'max_features': 'log2', 'max_depth': None}",0.9304582031250075,126.37520135900002,near,0.9298245614035088,0.9259740259740259,0.9090909090909091,0.9907407407407408,0.5056985200000099,0.023427535999985594,adv_label_near,126.93220717300005,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

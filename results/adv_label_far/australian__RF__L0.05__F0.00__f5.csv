@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+australian,RF,5,0.05,0.0,621,"{'n_estimators': 100, 'min_samples_leaf': 1, 'max_features': 0.5, 'max_depth': 5}",0.8281805333980609,69.64655919599997,far,0.8695652173913043,0.8654970760233918,0.8421052631578947,0.9482173174872666,0.17283833599998388,0.007772357000021657,adv_label_far,69.85522458399998,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

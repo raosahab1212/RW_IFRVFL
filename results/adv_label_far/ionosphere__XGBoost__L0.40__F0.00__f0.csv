@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,XGBoost,0,0.4,0.0,315,"{'subsample': 1.0, 'n_estimators': 500, 'max_depth': 7, 'learning_rate': 0.1, 'colsample_bytree': 1.0}",0.7769124531044923,43.073567458000014,far,0.5555555555555556,0.5324675324675324,0.42857142857142855,0.5183946488294314,0.5108806039999649,0.0022050310000167883,adv_label_far,43.61076657699999,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

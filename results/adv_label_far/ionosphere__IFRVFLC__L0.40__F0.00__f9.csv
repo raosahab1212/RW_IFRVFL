@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,IFRVFLC,9,0.4,0.0,316,"{'radius': 0.5, 'n_hidden': 150, 'lam': 0.001, 'gamma': 0.0625}",0.6827493050627276,1.5255092580000564,far,0.6857142857142857,0.6846846846846847,0.6666666666666666,0.8006993006993006,0.002226935999942725,0.0002907589999949778,adv_label_far,1.5399092109998946,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

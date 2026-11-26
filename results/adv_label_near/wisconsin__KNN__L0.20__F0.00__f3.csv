@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,KNN,3,0.2,0.0,512,"{'n_neighbors': 3, 'weights': 'uniform'}",0.8934145725931971,0.9591882259999238,near,0.8245614035087719,0.8026315789473684,0.7368421052631579,0.8346560846560847,0.0003841019999981654,0.001681776999930662,adv_label_near,0.9781618039999103,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+magic,ANFIS,5,0.05,0.0,17118,"{'L': 3, 'eta': 0.01, 'num_cluster': 2}",0.7502968436957792,185.51992692700003,near,0.7860147213459516,0.7503375912673598,0.6559594251901945,0.8509741452361987,15.777829182000005,2.885448380000014,adv_label_near,204.245125445,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

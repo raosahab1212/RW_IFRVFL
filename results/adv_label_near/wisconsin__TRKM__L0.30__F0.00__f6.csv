@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,TRKM,6,0.3,0.0,512,"{'mew': 1.0, 'lambd1': 0.001, 'eta1': 0.1}",0.8560605383656856,2.858808113000009,near,0.7719298245614035,0.7646872022864402,0.723404255319149,0.9246031746031746,0.004984437000075559,0.0009531489999972109,adv_label_near,2.8870349939999187,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,LightGBM,4,0.3,0.0,316,"{'num_leaves': 31, 'n_estimators': 300, 'min_child_samples': 10, 'learning_rate': 0.05}",0.8389319325765994,12.503559475000031,near,0.8,0.7733580018501387,0.6956521739130435,0.8840579710144927,0.22111795199998596,0.003163945999972384,adv_label_near,12.748539725,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

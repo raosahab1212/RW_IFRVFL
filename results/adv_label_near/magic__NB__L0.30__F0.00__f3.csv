@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+magic,NB,3,0.3,0.0,17118,{'var_smoothing': 1e-05},0.6714921892177491,0.323744970000007,near,0.7113564668769716,0.6593771764003582,0.5263157894736842,0.7430774527596236,0.0027706319999651896,0.0009037870001975534,adv_label_near,0.3777648840000438,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

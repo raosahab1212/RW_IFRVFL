@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,ANFIS,8,0.2,0.0,512,"{'L': 2, 'eta': 0.01, 'num_cluster': 2}",0.8009403242507908,78.41911020399999,far,0.7719298245614035,0.7466666666666666,0.6666666666666666,0.8525132275132274,0.8408384630000114,0.18555662499997538,adv_label_far,79.46274375900002,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

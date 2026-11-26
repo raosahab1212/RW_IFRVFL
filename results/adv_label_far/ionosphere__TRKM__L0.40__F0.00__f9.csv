@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,TRKM,9,0.4,0.0,316,"{'mew': 0.125, 'lambd1': 0.001, 'eta1': 0.01}",0.714899231879573,3.653163690999918,far,0.7714285714285715,0.7666666666666666,0.7333333333333333,0.7342657342657343,0.0036527949999936027,0.0010432760000185226,adv_label_far,3.68713634300002,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

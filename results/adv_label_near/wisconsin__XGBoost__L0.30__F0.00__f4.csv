@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+wisconsin,XGBoost,4,0.3,0.0,512,"{'subsample': 0.85, 'n_estimators': 100, 'max_depth': 7, 'learning_rate': 0.05, 'colsample_bytree': 0.7}",0.8615414519579883,46.179906450999965,near,0.7368421052631579,0.728485233407431,0.6808510638297872,0.8637566137566137,0.21009514799999351,0.0013876099999947655,adv_label_near,46.414186814999994,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

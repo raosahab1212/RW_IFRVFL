@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+australian,TRKM,0,0.3,0.0,621,"{'mew': 0.125, 'lambd1': 0.001, 'eta1': 0.01}",0.7886637870452505,2.34854902699999,near,0.7536231884057971,0.7517460317460317,0.7301587301587301,0.8333333333333334,0.004804510999974809,0.0009421440000778603,adv_label_near,2.370835305000014,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

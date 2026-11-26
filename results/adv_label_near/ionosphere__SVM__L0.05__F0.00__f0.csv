@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+ionosphere,SVM,0,0.05,0.0,315,"{'gamma': 1, 'C': 1}",0.9209244263096474,3.9398744200000237,near,0.9722222222222222,0.9693617021276595,0.96,1.0,0.004073317999996107,0.0012041380000482604,adv_label_near,3.975028167000005,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

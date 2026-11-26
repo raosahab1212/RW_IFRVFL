@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+heart,RVFL,0,0.1,0.0,243,"{'lam': 1.0, 'n_hidden': 50}",0.8417265415421641,1.0743693640000629,near,0.8888888888888888,0.8831168831168831,0.8571428571428571,0.9611111111111111,0.0005361959999845567,0.00019223200001761143,adv_label_near,1.0850733879999552,x86_64,4,Linux-7.0.0-1016-aws-x86_64-with-glibc2.43,3.13.18

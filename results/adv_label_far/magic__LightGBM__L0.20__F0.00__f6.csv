@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+magic,LightGBM,6,0.2,0.0,17118,"{'num_leaves': 63, 'n_estimators': 100, 'min_child_samples': 10, 'learning_rate': 0.1}",0.8197364549724618,35.51202286100005,far,0.685068349106204,0.6571224781845186,0.5592347314201619,0.6566094096453168,0.32541793699999744,0.023909287999970275,adv_label_far,35.931404242999974,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

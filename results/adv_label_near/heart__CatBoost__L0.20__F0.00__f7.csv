@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+heart,CatBoost,7,0.2,0.0,243,"{'learning_rate': 0.2, 'l2_leaf_reg': 3, 'iterations': 500, 'depth': 6}",0.8096269735113276,59.519451222000015,near,0.7037037037037037,0.7032967032967032,0.6923076923076923,0.7611111111111111,0.45660019299998567,0.000993505999986155,adv_label_near,60.008497718,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

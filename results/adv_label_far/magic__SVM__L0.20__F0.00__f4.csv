@@ -1,0 +1,2 @@
+dataset,model,fold,label_noise,feat_noise,train_n,params,inner_f1,tune_s,label_kind,accuracy,f1_macro,f1_minority,auc,fit_s,predict_s,experiment,wall_s,host_cpu,host_cores,host_os,python
+magic,SVM,4,0.2,0.0,17118,"{'gamma': 'scale', 'C': 1000}",0.831764708893809,56.325597814999995,far,0.7071503680336488,0.6767827587206332,0.577710386656558,0.6670339941591292,31.938805082999977,0.6560592830000189,adv_label_far,88.976058572,x86_64,4,Linux-7.0.0-1020-azure-x86_64-with-glibc2.43,3.13.18

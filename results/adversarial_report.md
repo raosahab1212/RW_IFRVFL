@@ -78,11 +78,11 @@ RW-IFRVFL against each model (wins/ties/losses, Holm-corrected Wilcoxon p), all 
 | RVFL     | 13/4/8    |   1     | 8/0/2      |    1     |
 | IFRVFLC  | 11/1/13   |   1     | 3/1/6      |    1     |
 
-## Test-time evasion (`adv_evasion`)
+## Test-time evasion, all numeric columns (`adv_evasion`)
 
-Models trained on clean data; test samples moved by L-inf PGD on an MLP surrogate (budget eps x training SD) or by a random-sign perturbation of the same budget. Mean accuracy over the five datasets.
+Models trained on clean data; test samples moved by L-inf PGD on an MLP surrogate (budget eps x training SD) or by a random-sign perturbation of the same budget; all numeric columns are perturbed. Mean accuracy over the five datasets.
 
-### pgd
+### pgd (adv_evasion)
 
 | model     |   clean |   0.05 |   0.1 |   0.2 |   0.3 |   0.4 |   0.6 |   0.8 |     1 |   rank |
 |:----------|--------:|-------:|------:|------:|------:|------:|------:|------:|------:|-------:|
@@ -101,7 +101,7 @@ Models trained on clean data; test samples moved by L-inf PGD on an MLP surrogat
 | RVFL      |   0.891 |  0.862 | 0.828 | 0.716 | 0.549 | 0.411 | 0.278 | 0.213 | 0.181 |  9.888 |
 | GBTSVM    |   0.834 |  0.811 | 0.774 | 0.683 | 0.578 | 0.487 | 0.363 | 0.279 | 0.232 |  9.962 |
 
-### random
+### random (adv_evasion)
 
 | model     |   clean |   0.05 |   0.1 |   0.2 |   0.3 |   0.4 |   0.6 |   0.8 |     1 |   rank |
 |:----------|--------:|-------:|------:|------:|------:|------:|------:|------:|------:|-------:|
@@ -167,8 +167,116 @@ White-box accuracy of the MLP surrogate itself:
 | magic      |          0.865 |              0.801 |              0.713 |              0.478 |              0.251 |              0.123 |              0.067 |              0.048 |              0.036 |
 | wisconsin  |          0.974 |              0.935 |              0.912 |              0.807 |              0.668 |              0.484 |              0.216 |              0.1   |              0.055 |
 
+## Test-time evasion, continuous columns only (`adv_evasion_cont`)
+
+Models trained on clean data; test samples moved by L-inf PGD on an MLP surrogate (budget eps x training SD) or by a random-sign perturbation of the same budget; numeric columns with at most 10 distinct training values (integer codes) are left unperturbed. Mean accuracy over the five datasets.
+
+### pgd (adv_evasion_cont)
+
+| model     |   clean |   0.05 |   0.1 |   0.2 |   0.3 |   0.4 |   0.6 |   0.8 |     1 |   rank |
+|:----------|--------:|-------:|------:|------:|------:|------:|------:|------:|------:|-------:|
+| KNN       |   0.869 |  0.856 | 0.841 | 0.811 | 0.776 | 0.734 | 0.649 | 0.582 | 0.527 |  4.425 |
+| NB        |   0.845 |  0.839 | 0.835 | 0.816 | 0.8   | 0.776 | 0.714 | 0.622 | 0.533 |  4.75  |
+| TRKM      |   0.88  |  0.869 | 0.852 | 0.807 | 0.749 | 0.704 | 0.599 | 0.509 | 0.473 |  5.488 |
+| RF        |   0.893 |  0.873 | 0.85  | 0.802 | 0.751 | 0.696 | 0.587 | 0.483 | 0.429 |  5.888 |
+| SVM       |   0.893 |  0.878 | 0.857 | 0.783 | 0.695 | 0.626 | 0.512 | 0.457 | 0.437 |  6.212 |
+| CatBoost  |   0.895 |  0.869 | 0.839 | 0.786 | 0.733 | 0.678 | 0.565 | 0.482 | 0.426 |  6.45  |
+| IFRVFLC   |   0.886 |  0.859 | 0.835 | 0.746 | 0.618 | 0.492 | 0.402 | 0.374 | 0.356 |  7.862 |
+| NF-RVFL   |   0.858 |  0.844 | 0.83  | 0.795 | 0.746 | 0.675 | 0.519 | 0.416 | 0.337 |  8.425 |
+| LightGBM  |   0.895 |  0.861 | 0.838 | 0.775 | 0.71  | 0.646 | 0.537 | 0.451 | 0.409 |  8.438 |
+| XGBoost   |   0.89  |  0.858 | 0.83  | 0.766 | 0.694 | 0.622 | 0.5   | 0.431 | 0.381 |  8.775 |
+| RW-IFRVFL |   0.885 |  0.861 | 0.832 | 0.743 | 0.612 | 0.486 | 0.396 | 0.365 | 0.34  |  9     |
+| RVFL      |   0.891 |  0.868 | 0.836 | 0.734 | 0.592 | 0.47  | 0.379 | 0.344 | 0.319 |  9.188 |
+| ANFIS     |   0.839 |  0.823 | 0.789 | 0.69  | 0.578 | 0.521 | 0.456 | 0.387 | 0.328 |  9.3   |
+| GBTSVM    |   0.834 |  0.814 | 0.782 | 0.709 | 0.622 | 0.549 | 0.444 | 0.379 | 0.353 | 10.8   |
+
+### random (adv_evasion_cont)
+
+| model     |   clean |   0.05 |   0.1 |   0.2 |   0.3 |   0.4 |   0.6 |   0.8 |     1 |   rank |
+|:----------|--------:|-------:|------:|------:|------:|------:|------:|------:|------:|-------:|
+| RVFL      |   0.891 |  0.888 | 0.884 | 0.88  | 0.868 | 0.845 | 0.806 | 0.764 | 0.722 |  5.325 |
+| KNN       |   0.869 |  0.867 | 0.866 | 0.864 | 0.859 | 0.853 | 0.837 | 0.824 | 0.814 |  6.112 |
+| SVM       |   0.893 |  0.892 | 0.891 | 0.881 | 0.864 | 0.836 | 0.783 | 0.706 | 0.678 |  6.225 |
+| IFRVFLC   |   0.886 |  0.883 | 0.88  | 0.872 | 0.858 | 0.837 | 0.799 | 0.76  | 0.722 |  6.375 |
+| RF        |   0.893 |  0.886 | 0.88  | 0.863 | 0.844 | 0.823 | 0.791 | 0.752 | 0.721 |  6.412 |
+| CatBoost  |   0.895 |  0.89  | 0.876 | 0.856 | 0.832 | 0.814 | 0.786 | 0.751 | 0.708 |  6.45  |
+| RW-IFRVFL |   0.885 |  0.884 | 0.879 | 0.871 | 0.856 | 0.833 | 0.792 | 0.752 | 0.714 |  7.362 |
+| NF-RVFL   |   0.858 |  0.857 | 0.855 | 0.849 | 0.841 | 0.835 | 0.817 | 0.795 | 0.767 |  8.188 |
+| LightGBM  |   0.895 |  0.884 | 0.874 | 0.847 | 0.825 | 0.804 | 0.775 | 0.74  | 0.703 |  8.4   |
+| NB        |   0.845 |  0.848 | 0.848 | 0.844 | 0.841 | 0.838 | 0.819 | 0.762 | 0.661 |  8.625 |
+| ANFIS     |   0.839 |  0.839 | 0.834 | 0.818 | 0.799 | 0.788 | 0.763 | 0.735 | 0.714 |  8.7   |
+| TRKM      |   0.88  |  0.879 | 0.879 | 0.864 | 0.84  | 0.815 | 0.757 | 0.687 | 0.65  |  8.762 |
+| GBTSVM    |   0.834 |  0.833 | 0.831 | 0.828 | 0.818 | 0.809 | 0.793 | 0.766 | 0.741 |  8.95  |
+| XGBoost   |   0.89  |  0.879 | 0.872 | 0.851 | 0.833 | 0.81  | 0.766 | 0.723 | 0.696 |  9.112 |
+
+Accuracy lost to PGD at eps = 0.4 (clean minus attacked):
+
+| model     |   drop |
+|:----------|-------:|
+| NB        |  0.069 |
+| KNN       |  0.135 |
+| TRKM      |  0.176 |
+| NF-RVFL   |  0.182 |
+| RF        |  0.197 |
+| CatBoost  |  0.217 |
+| LightGBM  |  0.249 |
+| SVM       |  0.267 |
+| XGBoost   |  0.268 |
+| GBTSVM    |  0.285 |
+| ANFIS     |  0.318 |
+| IFRVFLC   |  0.393 |
+| RW-IFRVFL |  0.4   |
+| RVFL      |  0.421 |
+
+RW-IFRVFL against each model under PGD (all eps, and eps >= 0.3):
+
+| model    | wtl_all   |   p_all | wtl_high   |   p_high |
+|:---------|:----------|--------:|:-----------|---------:|
+| SVM      | 7/2/31    |   0     | 3/1/21     |    0.002 |
+| RF       | 11/1/28   |   0.002 | 7/1/17     |    0.017 |
+| XGBoost  | 12/1/27   |   0.056 | 6/0/19     |    0.037 |
+| LightGBM | 13/1/26   |   0.056 | 8/0/17     |    0.037 |
+| CatBoost | 10/0/30   |   0.004 | 5/0/20     |    0.006 |
+| NB       | 11/0/29   |   0.002 | 4/0/21     |    0.002 |
+| KNN      | 8/2/30    |   0     | 1/0/24     |    0     |
+| NF-RVFL  | 19/0/21   |   0.226 | 10/0/15    |    0.074 |
+| ANFIS    | 27/1/12   |   0.226 | 17/1/7     |    0.815 |
+| GBTSVM   | 27/0/13   |   0.412 | 14/0/11    |    0.815 |
+| TRKM     | 15/1/24   |   0.004 | 8/1/16     |    0.017 |
+| RVFL     | 21/5/14   |   0.226 | 14/2/9     |    0.111 |
+| IFRVFLC  | 11/2/27   |   0.158 | 7/1/17     |    0.271 |
+
+White-box accuracy of the MLP surrogate itself:
+
+| dataset    |   mlp_test_acc |   mlp_pgd_acc_0.05 |   mlp_pgd_acc_0.10 |   mlp_pgd_acc_0.20 |   mlp_pgd_acc_0.30 |   mlp_pgd_acc_0.40 |   mlp_pgd_acc_0.60 |   mlp_pgd_acc_0.80 |   mlp_pgd_acc_1.00 |
+|:-----------|---------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|-------------------:|
+| australian |          0.868 |              0.861 |              0.849 |              0.826 |              0.813 |              0.796 |              0.764 |              0.72  |              0.68  |
+| heart      |          0.856 |              0.848 |              0.837 |              0.833 |              0.822 |              0.811 |              0.789 |              0.752 |              0.711 |
+| ionosphere |          0.923 |              0.883 |              0.837 |              0.703 |              0.447 |              0.21  |              0.08  |              0.031 |              0.014 |
+| magic      |          0.865 |              0.801 |              0.713 |              0.478 |              0.251 |              0.123 |              0.067 |              0.048 |              0.036 |
+| wisconsin  |          0.974 |              0.935 |              0.912 |              0.807 |              0.668 |              0.484 |              0.216 |              0.1   |              0.055 |
+
+PGD accuracy at eps = 0.4 per dataset, all numeric columns perturbed (`all`) or continuous columns only (`cont`); wisconsin and magic have no integer-coded columns, so their two columns must agree:
+
+| model     |   australian all |   heart all |   ionosphere all |   magic all |   wisconsin all |   australian cont |   heart cont |   ionosphere cont |   magic cont |   wisconsin cont |
+|:----------|-----------------:|------------:|-----------------:|------------:|----------------:|------------------:|-------------:|------------------:|-------------:|-----------------:|
+| SVM       |            0.835 |       0.552 |            0.638 |       0.166 |           0.672 |             0.836 |        0.804 |             0.652 |        0.166 |            0.672 |
+| RF        |            0.822 |       0.767 |            0.743 |       0.376 |           0.744 |             0.822 |        0.789 |             0.749 |        0.376 |            0.744 |
+| XGBoost   |            0.784 |       0.481 |            0.487 |       0.328 |           0.7   |             0.781 |        0.8   |             0.501 |        0.328 |            0.7   |
+| LightGBM  |            0.781 |       0.33  |            0.684 |       0.309 |           0.68  |             0.78  |        0.789 |             0.672 |        0.309 |            0.68  |
+| CatBoost  |            0.803 |       0.756 |            0.729 |       0.332 |           0.714 |             0.809 |        0.804 |             0.729 |        0.332 |            0.714 |
+| NB        |            0.817 |       0.615 |            0.353 |       0.664 |           0.812 |             0.825 |        0.811 |             0.769 |        0.664 |            0.812 |
+| KNN       |            0.843 |       0.67  |            0.761 |       0.459 |           0.798 |             0.846 |        0.807 |             0.761 |        0.459 |            0.798 |
+| NF-RVFL   |            0.809 |       0.496 |            0.439 |       0.527 |           0.752 |             0.814 |        0.733 |             0.55  |        0.527 |            0.752 |
+| ANFIS     |            0.806 |       0.507 |            0.14  |       0.637 |           0.196 |             0.809 |        0.807 |             0.157 |        0.637 |            0.196 |
+| GBTSVM    |            0.78  |       0.496 |            0.182 |       0.462 |           0.515 |             0.781 |        0.748 |             0.239 |        0.462 |            0.515 |
+| TRKM      |            0.823 |       0.53  |            0.766 |       0.367 |           0.765 |             0.832 |        0.778 |             0.78  |        0.367 |            0.765 |
+| RVFL      |            0.814 |       0.519 |            0.253 |       0.167 |           0.3   |             0.82  |        0.796 |             0.268 |        0.167 |            0.3   |
+| IFRVFLC   |            0.851 |       0.559 |            0.276 |       0.18  |           0.344 |             0.852 |        0.804 |             0.282 |        0.18  |            0.344 |
+| RW-IFRVFL |            0.836 |       0.563 |            0.248 |       0.167 |           0.368 |             0.841 |        0.781 |             0.27  |        0.167 |            0.368 |
+
 ## Notes
 
 - The clean (`attack = none`) rows reproduce `benchmark` exactly for all 700 (dataset, model, fold) triples.
 - The attack is a transfer attack from a two-layer MLP, so it is strongest against models with a similar smooth, dense decision function (the RVFL family, SVM) and weaker against trees and KNN.
-- Integer-coded columns (8 of 13 numeric columns of heart) and a class-constant binary column of ionosphere are perturbed like continuous features. This explains the drop of LightGBM, XGBoost (heart) and NB (ionosphere) already at eps = 0.05 under the random control, whose split thresholds or class variances sit on those discrete values.
+- Integer-coded columns (8 of 13 numeric columns of heart) and a class-constant binary column of ionosphere are perturbed like continuous features. This explains the drop of LightGBM, XGBoost (heart) and NB (ionosphere) already at eps = 0.05 under the random control, whose split thresholds or class variances sit on those discrete values. `adv_evasion_cont` leaves those columns unperturbed; its wisconsin results equal `adv_evasion` exactly and its magic results differ in one of 2,380 rows by one test sample (ANFIS, fold 0, eps = 0.3), from floating-point differences between runners.

@@ -73,14 +73,14 @@ def label_section(exp, title):
     return out, g
 
 
-def evasion_section():
-    df = load("adv_evasion")
+def evasion_section(exp, title, scope):
+    df = load(exp)
     df = df[df.model.isin(MODELS)]
     clean = df[df.attack == "none"].groupby(["dataset", "model"]).accuracy.mean().unstack()[MODELS]
-    out = ["## Test-time evasion (`adv_evasion`)", "",
+    out = [f"## {title} (`{exp}`)", "",
            "Models trained on clean data; test samples moved by L-inf PGD on an MLP surrogate (budget "
-           "eps x training SD) or by a random-sign perturbation of the same budget. Mean accuracy over the "
-           "five datasets.", ""]
+           f"eps x training SD) or by a random-sign perturbation of the same budget; {scope}. Mean accuracy "
+           "over the five datasets.", ""]
     tabs = {}
     for attack in ("pgd", "random"):
         d = df[df.attack == attack]
@@ -88,7 +88,7 @@ def evasion_section():
         tabs[attack] = g
         lv = level_table(g, "adv_eps")
         lv.insert(0, "clean", clean.mean())
-        out += [f"### {attack}", "", lv.round(3).to_markdown(), ""]
+        out += [f"### {attack} ({exp})", "", lv.round(3).to_markdown(), ""]
     g = tabs["pgd"]
     hi = g[g.index.get_level_values(0) >= 0.3]
     drop = (clean.mean() - g.xs(0.4, level=0).mean()).sort_values()
@@ -96,12 +96,28 @@ def evasion_section():
             drop.round(3).to_frame("drop").to_markdown(), "",
             "RW-IFRVFL against each model under PGD (all eps, and eps >= 0.3):", "",
             compare(g, hi).round(3).to_markdown(), ""]
-    sur = os.path.join(R, "adv", "surrogates.csv")
+    sur = os.path.join(R, "adv", "surrogates_cont.csv" if exp.endswith("_cont") else "surrogates.csv")
     if os.path.exists(sur):
         s = pd.read_csv(sur).groupby("dataset").mean(numeric_only=True)
         cols = ["mlp_test_acc"] + [c for c in s.columns if c.startswith("mlp_pgd_acc")]
         out += ["White-box accuracy of the MLP surrogate itself:", "", s[cols].round(3).to_markdown(), ""]
     return out
+
+
+def pgd_by_dataset(eps=0.4):
+    """PGD accuracy at one budget per dataset, all numeric columns versus continuous columns only."""
+    cols = {}
+    for exp, tag in (("adv_evasion", "all"), ("adv_evasion_cont", "cont")):
+        d = load(exp)
+        d = d[d.model.isin(MODELS) & (d.attack == "pgd") & (d.adv_eps == eps)]
+        g = d.groupby(["model", "dataset"]).accuracy.mean().unstack()
+        for ds in g.columns:
+            cols[(ds, tag)] = g[ds]
+    t = pd.DataFrame(cols).loc[MODELS]
+    t.columns = [f"{ds} {tag}" for ds, tag in t.columns]
+    return [f"PGD accuracy at eps = {eps:g} per dataset, all numeric columns perturbed (`all`) or "
+            "continuous columns only (`cont`); wisconsin and magic have no integer-coded columns, so their "
+            "two columns must agree:", "", t.round(3).to_markdown(), ""]
 
 
 def main():
@@ -111,7 +127,14 @@ def main():
         if os.path.exists(os.path.join(R, f"{exp}_all.csv")):
             lines += label_section(exp, title)[0]
     if os.path.exists(os.path.join(R, "adv_evasion_all.csv")):
-        lines += evasion_section()
+        lines += evasion_section("adv_evasion", "Test-time evasion, all numeric columns",
+                                 "all numeric columns are perturbed")
+    if os.path.exists(os.path.join(R, "adv_evasion_cont_all.csv")):
+        lines += evasion_section("adv_evasion_cont", "Test-time evasion, continuous columns only",
+                                 f"numeric columns with at most 10 distinct training values (integer codes) "
+                                 "are left unperturbed")
+        lines += pgd_by_dataset()
+    if os.path.exists(os.path.join(R, "adv_evasion_all.csv")):
         lines += ["## Notes", "",
                   "- The clean (`attack = none`) rows reproduce `benchmark` exactly for all 700 "
                   "(dataset, model, fold) triples.",
@@ -121,7 +144,10 @@ def main():
                   "- Integer-coded columns (8 of 13 numeric columns of heart) and a class-constant binary "
                   "column of ionosphere are perturbed like continuous features. This explains the drop of "
                   "LightGBM, XGBoost (heart) and NB (ionosphere) already at eps = 0.05 under the random "
-                  "control, whose split thresholds or class variances sit on those discrete values.", ""]
+                  "control, whose split thresholds or class variances sit on those discrete values. "
+                  "`adv_evasion_cont` leaves those columns unperturbed; its wisconsin results equal "
+                  "`adv_evasion` exactly and its magic results differ in one of 2,380 rows by one test "
+                  "sample (ANFIS, fold 0, eps = 0.3), from floating-point differences between runners.", ""]
     with open(os.path.join(R, "adversarial_report.md"), "w", encoding="utf-8") as f:
         f.write("\n".join(lines))
     print("\n".join(lines))
